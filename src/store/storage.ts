@@ -5,7 +5,7 @@ const SETTINGS_KEY = "@chavurat_shas:settings";
 const PROGRESS_KEY = "@chavurat_shas:progress";
 const PROGRESS_VERSION_KEY = "@chavurat_shas:progress_v";
 
-export type SessionNumber = 1 | 2 | 3 | 4;
+export type SessionNumber = 1 | 2 | 3 | 4 | 5;
 
 export type AppSettings = {
   version: 2;

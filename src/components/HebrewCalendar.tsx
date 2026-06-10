@@ -34,6 +34,7 @@ type Props = {
   markings: Record<string, DayMarking>; // keyed by Gregorian "YYYY-MM-DD"
   onDayPress: (date: Date, hebrew: { year: number; month: number; day: number }) => void;
   onMonthChange: (ym: HebrewYM) => void;
+  highlightToday?: boolean; // default true; pass false to disable automatic today indicator
 };
 
 const WEEKDAY_LABELS = ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש״ק"]; // Sunday..Shabbat
@@ -54,6 +55,7 @@ export default function HebrewCalendar({
   markings,
   onDayPress,
   onMonthChange,
+  highlightToday = true,
 }: Props) {
   const todayJDN = dateToJDN(new Date());
 
@@ -138,7 +140,7 @@ export default function HebrewCalendar({
               }
               const marking = markings[cell.dateString!] ?? {};
               const isToday =
-                hebrewToJDN(year, month, cell.day) === todayJDN;
+                highlightToday && hebrewToJDN(year, month, cell.day) === todayJDN;
               return (
                 <TouchableOpacity
                   key={ci}
@@ -158,7 +160,7 @@ export default function HebrewCalendar({
                     <Text
                       style={[
                         styles.dayText,
-                        isToday && styles.todayText,
+                        isToday && !marking.selected && styles.todayText,
                         marking.selected && styles.selectedText,
                       ]}
                     >

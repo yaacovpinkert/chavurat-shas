@@ -7,6 +7,7 @@ const SESSION_LABELS: Record<SessionNumber, string> = {
   2: "חזרה א׳",
   3: "חזרה ב׳",
   4: "חזרה ג׳",
+  5: "חזרה ד׳",
 };
 
 const SESSION_COLORS: Record<SessionNumber, string> = {
@@ -14,6 +15,7 @@ const SESSION_COLORS: Record<SessionNumber, string> = {
   2: "#7ED321",
   3: "#F5A623",
   4: "#D0021B",
+  5: "#7B2D8B",
 };
 
 type Props = {

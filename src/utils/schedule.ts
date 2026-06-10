@@ -3,7 +3,7 @@ import { TrackConfig, TrackType, TrackUnit } from "../tracks/types";
 import { getTrackDefinition } from "../tracks/registry";
 import { AppSettings } from "../store/storage";
 
-export type SessionNumber = 1 | 2 | 3 | 4;
+export type SessionNumber = 1 | 2 | 3 | 4 | 5;
 
 export type ScheduleItem = {
   trackId: string;
@@ -13,16 +13,18 @@ export type ScheduleItem = {
   session: SessionNumber;
 };
 
-// Offsets from the day a unit is first learned: session 1=0, 2=+1, 3=+8, 4=+38.
+// Offsets from the day a unit is first learned: session 1=0, 2=+1, 3=+8, 4=+38, 5=+128.
+// Session 5 is 90 days (≈3 months) after session 4.
 // Applies to every track type.
 const SESSION_OFFSETS: Record<SessionNumber, number> = {
   1: 0,
   2: 1,
   3: 8,
   4: 38,
+  5: 128,
 };
 
-const SESSIONS: SessionNumber[] = [1, 2, 3, 4];
+const SESSIONS: SessionNumber[] = [1, 2, 3, 4, 5];
 
 // For day startDate+k, session S contributes the unit at index:
 // startUnitIndex + k - SESSION_OFFSETS[S], when that index exists.

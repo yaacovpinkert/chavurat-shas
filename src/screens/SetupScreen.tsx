@@ -6,13 +6,14 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import PlatformDatePicker from "../components/PlatformDatePicker";
 import PlatformPicker from "../components/PlatformPicker";
+import HebrewCalendar from "../components/HebrewCalendar";
 import UnitPicker from "../components/UnitPicker";
 import { TrackType } from "../tracks/types";
 import { getTrackDefinition, getAllTrackTypes, getDefaultPath } from "../tracks/registry";
 import { saveSettings, newTrackId } from "../store/storage";
 import { formatDateString } from "../utils/schedule";
+import { toHebrewDate, toHebrewYMD } from "../utils/hebrewDate";
 
 type Props = {
   onComplete: () => void;
@@ -25,6 +26,10 @@ export default function SetupScreen({ onComplete }: Props) {
   const [path, setPath] = useState<(string | number)[]>(() =>
     getDefaultPath(getTrackDefinition("mishna"))
   );
+
+  const todayHeb = toHebrewYMD(new Date());
+  const [calYear, setCalYear] = useState(todayHeb.year);
+  const [calMonth, setCalMonth] = useState(todayHeb.month);
 
   const definition = getTrackDefinition(trackType);
 
@@ -81,7 +86,15 @@ export default function SetupScreen({ onComplete }: Props) {
           <Text style={styles.sectionTitle}>תאריך התחלה</Text>
           <Text style={styles.hint}>מתי מתחילים ללמוד?</Text>
 
-          <PlatformDatePicker value={startDate} onChange={setStartDate} />
+          <Text style={styles.selectedDate}>{toHebrewDate(startDate).full}</Text>
+          <HebrewCalendar
+            year={calYear}
+            month={calMonth}
+            markings={{ [formatDateString(startDate)]: { selected: true, selectedColor: "#4A90E2" } }}
+            onDayPress={(date) => setStartDate(date)}
+            onMonthChange={(ym) => { setCalYear(ym.year); setCalMonth(ym.month); }}
+            highlightToday={false}
+          />
 
           <View style={styles.buttonRow}>
             <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
@@ -159,6 +172,13 @@ const styles = StyleSheet.create({
     color: "#888",
     textAlign: "right",
     marginBottom: 20,
+  },
+  selectedDate: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#4A90E2",
+    textAlign: "center",
+    marginBottom: 12,
   },
   buttonRow: {
     flexDirection: "row",
