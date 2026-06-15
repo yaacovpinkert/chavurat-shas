@@ -6,51 +6,52 @@ import { formatHebrewDay } from "../utils/hebrewDate";
 
 type BavliMasechet = {
   name: string;
+  seder: string;
   firstDaf: number;
   lastDaf: number;
 };
 
 const BAVLI_STRUCTURE: BavliMasechet[] = [
-  { name: "ברכות", firstDaf: 2, lastDaf: 64 },
-  { name: "שבת", firstDaf: 2, lastDaf: 157 },
-  { name: "עירובין", firstDaf: 2, lastDaf: 105 },
-  { name: "פסחים", firstDaf: 2, lastDaf: 121 },
-  { name: "שקלים", firstDaf: 2, lastDaf: 22 },
-  { name: "יומא", firstDaf: 2, lastDaf: 88 },
-  { name: "סוכה", firstDaf: 2, lastDaf: 56 },
-  { name: "ביצה", firstDaf: 2, lastDaf: 40 },
-  { name: "ראש השנה", firstDaf: 2, lastDaf: 35 },
-  { name: "תענית", firstDaf: 2, lastDaf: 31 },
-  { name: "מגילה", firstDaf: 2, lastDaf: 32 },
-  { name: "מועד קטן", firstDaf: 2, lastDaf: 29 },
-  { name: "חגיגה", firstDaf: 2, lastDaf: 27 },
-  { name: "יבמות", firstDaf: 2, lastDaf: 122 },
-  { name: "כתובות", firstDaf: 2, lastDaf: 112 },
-  { name: "נדרים", firstDaf: 2, lastDaf: 91 },
-  { name: "נזיר", firstDaf: 2, lastDaf: 66 },
-  { name: "סוטה", firstDaf: 2, lastDaf: 49 },
-  { name: "גיטין", firstDaf: 2, lastDaf: 90 },
-  { name: "קידושין", firstDaf: 2, lastDaf: 82 },
-  { name: "בבא קמא", firstDaf: 2, lastDaf: 119 },
-  { name: "בבא מציעא", firstDaf: 2, lastDaf: 119 },
-  { name: "בבא בתרא", firstDaf: 2, lastDaf: 176 },
-  { name: "סנהדרין", firstDaf: 2, lastDaf: 113 },
-  { name: "מכות", firstDaf: 2, lastDaf: 24 },
-  { name: "שבועות", firstDaf: 2, lastDaf: 49 },
-  { name: "עבודה זרה", firstDaf: 2, lastDaf: 76 },
-  { name: "הוריות", firstDaf: 2, lastDaf: 14 },
-  { name: "זבחים", firstDaf: 2, lastDaf: 120 },
-  { name: "מנחות", firstDaf: 2, lastDaf: 110 },
-  { name: "חולין", firstDaf: 2, lastDaf: 142 },
-  { name: "בכורות", firstDaf: 2, lastDaf: 61 },
-  { name: "ערכין", firstDaf: 2, lastDaf: 34 },
-  { name: "תמורה", firstDaf: 2, lastDaf: 34 },
-  { name: "כריתות", firstDaf: 2, lastDaf: 28 },
-  { name: "מעילה", firstDaf: 2, lastDaf: 22 },
-  { name: "קינים", firstDaf: 23, lastDaf: 25 },
-  { name: "תמיד", firstDaf: 26, lastDaf: 33 },
-  { name: "מדות", firstDaf: 34, lastDaf: 37 },
-  { name: "נדה", firstDaf: 2, lastDaf: 73 },
+  { name: "ברכות", seder: "זרעים", firstDaf: 2, lastDaf: 64 },
+  { name: "שבת", seder: "מועד", firstDaf: 2, lastDaf: 157 },
+  { name: "עירובין", seder: "מועד", firstDaf: 2, lastDaf: 105 },
+  { name: "פסחים", seder: "מועד", firstDaf: 2, lastDaf: 121 },
+  { name: "שקלים", seder: "מועד", firstDaf: 2, lastDaf: 22 },
+  { name: "יומא", seder: "מועד", firstDaf: 2, lastDaf: 88 },
+  { name: "סוכה", seder: "מועד", firstDaf: 2, lastDaf: 56 },
+  { name: "ביצה", seder: "מועד", firstDaf: 2, lastDaf: 40 },
+  { name: "ראש השנה", seder: "מועד", firstDaf: 2, lastDaf: 35 },
+  { name: "תענית", seder: "מועד", firstDaf: 2, lastDaf: 31 },
+  { name: "מגילה", seder: "מועד", firstDaf: 2, lastDaf: 32 },
+  { name: "מועד קטן", seder: "מועד", firstDaf: 2, lastDaf: 29 },
+  { name: "חגיגה", seder: "מועד", firstDaf: 2, lastDaf: 27 },
+  { name: "יבמות", seder: "נשים", firstDaf: 2, lastDaf: 122 },
+  { name: "כתובות", seder: "נשים", firstDaf: 2, lastDaf: 112 },
+  { name: "נדרים", seder: "נשים", firstDaf: 2, lastDaf: 91 },
+  { name: "נזיר", seder: "נשים", firstDaf: 2, lastDaf: 66 },
+  { name: "סוטה", seder: "נשים", firstDaf: 2, lastDaf: 49 },
+  { name: "גיטין", seder: "נשים", firstDaf: 2, lastDaf: 90 },
+  { name: "קידושין", seder: "נשים", firstDaf: 2, lastDaf: 82 },
+  { name: "בבא קמא", seder: "נזיקין", firstDaf: 2, lastDaf: 119 },
+  { name: "בבא מציעא", seder: "נזיקין", firstDaf: 2, lastDaf: 119 },
+  { name: "בבא בתרא", seder: "נזיקין", firstDaf: 2, lastDaf: 176 },
+  { name: "סנהדרין", seder: "נזיקין", firstDaf: 2, lastDaf: 113 },
+  { name: "מכות", seder: "נזיקין", firstDaf: 2, lastDaf: 24 },
+  { name: "שבועות", seder: "נזיקין", firstDaf: 2, lastDaf: 49 },
+  { name: "עבודה זרה", seder: "נזיקין", firstDaf: 2, lastDaf: 76 },
+  { name: "הוריות", seder: "נזיקין", firstDaf: 2, lastDaf: 14 },
+  { name: "זבחים", seder: "קדשים", firstDaf: 2, lastDaf: 120 },
+  { name: "מנחות", seder: "קדשים", firstDaf: 2, lastDaf: 110 },
+  { name: "חולין", seder: "קדשים", firstDaf: 2, lastDaf: 142 },
+  { name: "בכורות", seder: "קדשים", firstDaf: 2, lastDaf: 61 },
+  { name: "ערכין", seder: "קדשים", firstDaf: 2, lastDaf: 34 },
+  { name: "תמורה", seder: "קדשים", firstDaf: 2, lastDaf: 34 },
+  { name: "כריתות", seder: "קדשים", firstDaf: 2, lastDaf: 28 },
+  { name: "מעילה", seder: "קדשים", firstDaf: 2, lastDaf: 22 },
+  { name: "קינים", seder: "קדשים", firstDaf: 23, lastDaf: 25 },
+  { name: "תמיד", seder: "קדשים", firstDaf: 26, lastDaf: 33 },
+  { name: "מדות", seder: "קדשים", firstDaf: 34, lastDaf: 37 },
+  { name: "נדה", seder: "טהרות", firstDaf: 2, lastDaf: 73 },
 ];
 
 export type DafEntry = {
@@ -134,4 +135,46 @@ export function getAmudByIndex(index: number): AmudEntry | undefined {
 
 export function getIndexForAmud(masechetName: string, daf: number, amud: 1 | 2): number {
   return (getIndexForDaf(masechetName, daf) - 1) * 2 + amud;
+}
+
+// ─── Group ranges (one entry per masechet) for selective study ────────────
+
+export type BavliGroup = {
+  seder: string;
+  masechet: string;
+  startIndex: number;
+  endIndex: number;
+};
+
+let _dafGroups: BavliGroup[] | null = null;
+let _amudGroups: BavliGroup[] | null = null;
+
+export function getDafGroups(): BavliGroup[] {
+  if (_dafGroups) return _dafGroups;
+  const groups: BavliGroup[] = [];
+  let index = 1;
+  for (const m of BAVLI_STRUCTURE) {
+    const count = m.lastDaf - m.firstDaf + 1;
+    groups.push({
+      seder: m.seder,
+      masechet: m.name,
+      startIndex: index,
+      endIndex: index + count - 1,
+    });
+    index += count;
+  }
+  _dafGroups = groups;
+  return groups;
+}
+
+export function getAmudGroups(): BavliGroup[] {
+  if (_amudGroups) return _amudGroups;
+  // Each daf is two amudim, so amud ranges are the daf ranges scaled ×2.
+  _amudGroups = getDafGroups().map((g) => ({
+    seder: g.seder,
+    masechet: g.masechet,
+    startIndex: (g.startIndex - 1) * 2 + 1,
+    endIndex: g.endIndex * 2,
+  }));
+  return _amudGroups;
 }

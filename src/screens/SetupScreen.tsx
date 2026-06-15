@@ -8,9 +8,14 @@ import {
 } from "react-native";
 import PlatformPicker from "../components/PlatformPicker";
 import HebrewCalendar from "../components/HebrewCalendar";
-import UnitPicker from "../components/UnitPicker";
+import GroupSelector from "../components/GroupSelector";
 import { TrackType } from "../tracks/types";
-import { getTrackDefinition, getAllTrackTypes, getDefaultPath } from "../tracks/registry";
+import {
+  getTrackDefinition,
+  getAllTrackTypes,
+  getAllGroupKeys,
+  startIndexForSelection,
+} from "../tracks/registry";
 import { saveSettings, newTrackId } from "../store/storage";
 import { formatDateString } from "../utils/schedule";
 import { toHebrewDate, toHebrewYMD } from "../utils/hebrewDate";
@@ -23,8 +28,8 @@ export default function SetupScreen({ onComplete }: Props) {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [trackType, setTrackType] = useState<TrackType>("mishna");
   const [startDate, setStartDate] = useState(new Date());
-  const [path, setPath] = useState<(string | number)[]>(() =>
-    getDefaultPath(getTrackDefinition("mishna"))
+  const [selectedGroups, setSelectedGroups] = useState<string[]>(() =>
+    getAllGroupKeys(getTrackDefinition("mishna"))
   );
 
   const todayHeb = toHebrewYMD(new Date());
@@ -35,10 +40,11 @@ export default function SetupScreen({ onComplete }: Props) {
 
   function onTrackTypeChange(val: TrackType) {
     setTrackType(val);
-    setPath(getDefaultPath(getTrackDefinition(val)));
+    setSelectedGroups(getAllGroupKeys(getTrackDefinition(val)));
   }
 
   async function handleConfirm() {
+    if (selectedGroups.length === 0) return;
     await saveSettings({
       version: 2,
       tracks: [
@@ -46,7 +52,8 @@ export default function SetupScreen({ onComplete }: Props) {
           id: newTrackId(),
           trackType,
           startDate: formatDateString(startDate),
-          startUnitIndex: definition.getIndexForPath(path),
+          startUnitIndex: startIndexForSelection(definition, selectedGroups),
+          selectedGroups,
         },
       ],
     });
@@ -109,16 +116,24 @@ export default function SetupScreen({ onComplete }: Props) {
 
       {step === 3 && (
         <View style={styles.card}>
-          <Text style={styles.sectionTitle}>נקודת התחלה</Text>
-          <Text style={styles.hint}>מאיפה מתחילים ב{definition.name}?</Text>
+          <Text style={styles.sectionTitle}>בחירת מסכתות וספרים</Text>
+          <Text style={styles.hint}>מה לומדים ב{definition.name}?</Text>
 
-          <UnitPicker definition={definition} path={path} onChange={setPath} />
+          <GroupSelector
+            definition={definition}
+            selected={selectedGroups}
+            onChange={setSelectedGroups}
+          />
 
           <View style={styles.buttonRow}>
             <TouchableOpacity style={styles.backButton} onPress={() => setStep(2)}>
               <Text style={styles.backButtonText}>חזור</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.nextButton} onPress={handleConfirm}>
+            <TouchableOpacity
+              style={[styles.nextButton, selectedGroups.length === 0 && styles.nextButtonDisabled]}
+              onPress={handleConfirm}
+              disabled={selectedGroups.length === 0}
+            >
               <Text style={styles.nextButtonText}>התחל !</Text>
             </TouchableOpacity>
           </View>
@@ -192,6 +207,9 @@ const styles = StyleSheet.create({
     padding: 14,
     flex: 1,
     alignItems: "center",
+  },
+  nextButtonDisabled: {
+    backgroundColor: "#b8c8e8",
   },
   backButton: {
     backgroundColor: "#eee",

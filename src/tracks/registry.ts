@@ -1,4 +1,4 @@
-import { TrackDefinition, TrackType, TrackUnit } from "./types";
+import { TrackDefinition, TrackSection, TrackType, TrackUnit } from "./types";
 import {
   getMishnaByIndex,
   getMishnaCount,
@@ -10,6 +10,8 @@ import {
   getPerekByIndex,
   getPerekCount,
   getIndexForPerek,
+  getMishnaGroups,
+  getPerekGroups,
 } from "../data/mishnayot";
 import {
   getBavliMasechtot,
@@ -20,6 +22,8 @@ import {
   getAmudByIndex,
   getAmudCount,
   getIndexForAmud,
+  getDafGroups,
+  getAmudGroups,
 } from "../data/bavli";
 import {
   getTanachBooks,
@@ -27,6 +31,7 @@ import {
   getTanachChapterByIndex,
   getTanachChapterCount,
   getIndexForTanachChapter,
+  getTanachGroups,
 } from "../data/tanach";
 import { formatHebrewDay } from "../utils/hebrewDate";
 
@@ -35,6 +40,28 @@ function rangeOptions(count: number, labelPrefix: string, from = 1) {
     label: `${labelPrefix} ${formatHebrewDay(from + i)}`,
     value: from + i,
   }));
+}
+
+// Group a flat, canonically-ordered list of {sectionLabel, key, startIndex,
+// endIndex} into TrackSections, preserving first-seen section order.
+function buildSections(
+  groups: { sectionLabel: string; key: string; startIndex: number; endIndex: number }[]
+): TrackSection[] {
+  const sections: TrackSection[] = [];
+  for (const g of groups) {
+    let section = sections.find((s) => s.label === g.sectionLabel);
+    if (!section) {
+      section = { label: g.sectionLabel, groups: [] };
+      sections.push(section);
+    }
+    section.groups.push({
+      key: g.key,
+      label: g.key,
+      startIndex: g.startIndex,
+      endIndex: g.endIndex,
+    });
+  }
+  return sections;
 }
 
 const mishnaTrack: TrackDefinition = {
@@ -52,6 +79,16 @@ const mishnaTrack: TrackDefinition = {
   getIndexForPath(path) {
     const [seder, masechet, perek, mishna] = path as [string, string, number, number];
     return getGlobalIndexFor(seder, masechet, perek, mishna);
+  },
+  getSections() {
+    return buildSections(
+      getMishnaGroups().map((g) => ({
+        sectionLabel: g.seder,
+        key: g.masechet,
+        startIndex: g.startIndex,
+        endIndex: g.endIndex,
+      }))
+    );
   },
   pickerLevels: [
     {
@@ -99,6 +136,16 @@ const mishnaPerekTrack: TrackDefinition = {
     const [seder, masechet, perek] = path as [string, string, number];
     return getIndexForPerek(seder, masechet, perek);
   },
+  getSections() {
+    return buildSections(
+      getPerekGroups().map((g) => ({
+        sectionLabel: g.seder,
+        key: g.masechet,
+        startIndex: g.startIndex,
+        endIndex: g.endIndex,
+      }))
+    );
+  },
   pickerLevels: [
     {
       key: "seder",
@@ -132,6 +179,16 @@ const bavliDafTrack: TrackDefinition = {
     const [masechet, daf] = path as [string, number];
     return getIndexForDaf(masechet, daf);
   },
+  getSections() {
+    return buildSections(
+      getDafGroups().map((g) => ({
+        sectionLabel: g.seder,
+        key: g.masechet,
+        startIndex: g.startIndex,
+        endIndex: g.endIndex,
+      }))
+    );
+  },
   pickerLevels: [
     {
       key: "masechet",
@@ -160,6 +217,16 @@ const bavliAmudTrack: TrackDefinition = {
   getIndexForPath(path) {
     const [masechet, daf, amud] = path as [string, number, 1 | 2];
     return getIndexForAmud(masechet, daf, amud);
+  },
+  getSections() {
+    return buildSections(
+      getAmudGroups().map((g) => ({
+        sectionLabel: g.seder,
+        key: g.masechet,
+        startIndex: g.startIndex,
+        endIndex: g.endIndex,
+      }))
+    );
   },
   pickerLevels: [
     {
@@ -197,6 +264,16 @@ const tanachPerekTrack: TrackDefinition = {
   getIndexForPath(path) {
     const [book, chapter] = path as [string, number];
     return getIndexForTanachChapter(book, chapter);
+  },
+  getSections() {
+    return buildSections(
+      getTanachGroups().map((g) => ({
+        sectionLabel: g.section,
+        key: g.book,
+        startIndex: g.startIndex,
+        endIndex: g.endIndex,
+      }))
+    );
   },
   pickerLevels: [
     {
@@ -237,4 +314,24 @@ export function getDefaultPath(def: TrackDefinition): (string | number)[] {
     path.push(opts[0]?.value ?? 1);
   }
   return path;
+}
+
+// All group keys for a track, in canonical study order.
+export function getAllGroupKeys(def: TrackDefinition): string[] {
+  return def.getSections().flatMap((s) => s.groups.map((g) => g.key));
+}
+
+// The startUnitIndex implied by a selection: the start of the first selected
+// group in canonical order. Falls back to 1 if nothing is selected.
+export function startIndexForSelection(
+  def: TrackDefinition,
+  selectedGroups: string[]
+): number {
+  const selected = new Set(selectedGroups);
+  for (const section of def.getSections()) {
+    for (const g of section.groups) {
+      if (selected.has(g.key)) return g.startIndex;
+    }
+  }
+  return 1;
 }

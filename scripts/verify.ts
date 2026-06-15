@@ -13,6 +13,7 @@ import {
 import { getDafCount, getAmudCount, getDafByIndex, getAmudByIndex } from "../src/data/bavli";
 import { getTanachChapterCount, getTanachChapterByIndex } from "../src/data/tanach";
 import { getPerekCount, getMishnaCount, getPerekByIndex } from "../src/data/mishnayot";
+import { getTrackDefinition, getAllTrackTypes } from "../src/tracks/registry";
 
 let failures = 0;
 function check(name: string, cond: boolean, extra?: unknown) {
@@ -34,6 +35,27 @@ console.log("first daf:", getDafByIndex(1)?.label, "| last daf:", getDafByIndex(
 console.log("amud 1:", getAmudByIndex(1)?.label, "| amud 2:", getAmudByIndex(2)?.label, "| last:", getAmudByIndex(5422)?.label);
 console.log("first perek:", getPerekByIndex(1)?.label, "| last:", getPerekByIndex(525)?.label);
 console.log("tanach 1:", getTanachChapterByIndex(1)?.label, "| 929:", getTanachChapterByIndex(929)?.label);
+
+// ── track sections / group ranges (selective study) ──
+// Each track's groups must be contiguous, non-overlapping, cover [1, unitCount]
+// with no gaps, and every group must appear in exactly one section.
+for (const type of getAllTrackTypes()) {
+  const def = getTrackDefinition(type);
+  const sections = def.getSections();
+  const groups = sections.flatMap((s) => s.groups);
+  const keys = new Set<string>();
+  let contiguous = true;
+  let expectedStart = 1;
+  for (const g of groups) {
+    if (g.startIndex !== expectedStart || g.endIndex < g.startIndex) contiguous = false;
+    expectedStart = g.endIndex + 1;
+    keys.add(g.key);
+  }
+  const total = groups.reduce((sum, g) => sum + (g.endIndex - g.startIndex + 1), 0);
+  check(`${type}: groups cover unitCount`, total === def.unitCount, `${total} vs ${def.unitCount}`);
+  check(`${type}: groups contiguous from 1`, contiguous && expectedStart - 1 === def.unitCount, expectedStart - 1);
+  check(`${type}: group keys unique`, keys.size === groups.length, `${keys.size} vs ${groups.length}`);
+}
 
 // ── Hebrew date round-trip over ~6 years ──
 let bad = 0;

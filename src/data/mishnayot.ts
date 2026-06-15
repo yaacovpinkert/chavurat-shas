@@ -27,7 +27,7 @@ const SHAS_STRUCTURE: SederData[] = [
     name: "זרעים",
     masachtot: [
       { name: "ברכות", perakim: [5, 8, 6, 7, 5, 8, 5, 8, 5] },
-      { name: "פיאה", perakim: [6, 8, 8, 11, 8, 11, 8, 9] },
+      { name: "פאה", perakim: [6, 8, 8, 11, 8, 11, 8, 9] },
       { name: "דמאי", perakim: [4, 5, 6, 7, 11, 12, 8] },
       { name: "כלאים", perakim: [9, 11, 7, 9, 8, 9, 8, 6, 10] },
       { name: "שביעית", perakim: [8, 10, 10, 10, 9, 6, 7, 11, 9, 9] },
@@ -271,4 +271,61 @@ export function getGlobalIndexFor(
       e.mishna === mishnaNum
   );
   return entry?.globalIndex ?? 1;
+}
+
+// ─── Group ranges (one entry per masechet) for selective study ────────────
+
+export type MishnaGroup = {
+  seder: string;
+  masechet: string;
+  startIndex: number;
+  endIndex: number;
+};
+
+let _mishnaGroups: MishnaGroup[] | null = null;
+let _perekGroups: MishnaGroup[] | null = null;
+
+// Bucket a canonically-ordered flat list into contiguous per-masechet ranges.
+function buildGroups(
+  entries: { seder: string; masechet: string; index: number }[]
+): MishnaGroup[] {
+  const groups: MishnaGroup[] = [];
+  for (const e of entries) {
+    const last = groups[groups.length - 1];
+    if (last && last.masechet === e.masechet && last.seder === e.seder) {
+      last.endIndex = e.index;
+    } else {
+      groups.push({
+        seder: e.seder,
+        masechet: e.masechet,
+        startIndex: e.index,
+        endIndex: e.index,
+      });
+    }
+  }
+  return groups;
+}
+
+export function getMishnaGroups(): MishnaGroup[] {
+  if (_mishnaGroups) return _mishnaGroups;
+  _mishnaGroups = buildGroups(
+    getAllMishnayot().map((e) => ({
+      seder: e.seder,
+      masechet: e.masechet,
+      index: e.globalIndex,
+    }))
+  );
+  return _mishnaGroups;
+}
+
+export function getPerekGroups(): MishnaGroup[] {
+  if (_perekGroups) return _perekGroups;
+  _perekGroups = buildGroups(
+    getAllPerakim().map((e) => ({
+      seder: e.seder,
+      masechet: e.masechet,
+      index: e.index,
+    }))
+  );
+  return _perekGroups;
 }

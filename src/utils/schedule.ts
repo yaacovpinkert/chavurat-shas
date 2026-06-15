@@ -1,7 +1,9 @@
 import { differenceInCalendarDays, startOfDay } from "date-fns";
-import { TrackConfig, TrackType, TrackUnit } from "../tracks/types";
+import { TrackConfig, TrackDefinition, TrackType, TrackUnit } from "../tracks/types";
 import { getTrackDefinition } from "../tracks/registry";
 import { AppSettings } from "../store/storage";
+
+type Range = { start: number; end: number };
 
 export type SessionNumber = 1 | 2 | 3 | 4 | 5;
 
@@ -26,8 +28,53 @@ const SESSION_OFFSETS: Record<SessionNumber, number> = {
 
 const SESSIONS: SessionNumber[] = [1, 2, 3, 4, 5];
 
-// For day startDate+k, session S contributes the unit at index:
-// startUnitIndex + k - SESSION_OFFSETS[S], when that index exists.
+// The ordered "study list" for a track: the canonical concatenation of the
+// selected books' index ranges. When no books are selected (legacy tracks),
+// it is the whole track [1, unitCount] — making the subset path a superset of
+// the original linear behavior.
+function buildStudyRanges(track: TrackConfig, def: TrackDefinition): Range[] {
+  if (!track.selectedGroups || track.selectedGroups.length === 0) {
+    return [{ start: 1, end: def.unitCount }];
+  }
+  const selected = new Set(track.selectedGroups);
+  const ranges: Range[] = [];
+  for (const section of def.getSections()) {
+    for (const g of section.groups) {
+      if (selected.has(g.key)) ranges.push({ start: g.startIndex, end: g.endIndex });
+    }
+  }
+  return ranges;
+}
+
+function studyLength(ranges: Range[]): number {
+  return ranges.reduce((sum, r) => sum + (r.end - r.start + 1), 0);
+}
+
+// 1-based position within the study list -> global unit index.
+function positionToUnitIndex(ranges: Range[], pos: number): number {
+  let remaining = pos;
+  for (const r of ranges) {
+    const size = r.end - r.start + 1;
+    if (remaining <= size) return r.start + remaining - 1;
+    remaining -= size;
+  }
+  return -1; // out of range; caller guards with studyLength
+}
+
+// Global unit index -> 1-based position within the study list, or null if the
+// index lies outside the selected ranges.
+function unitIndexToPosition(ranges: Range[], idx: number): number | null {
+  let before = 0;
+  for (const r of ranges) {
+    if (idx >= r.start && idx <= r.end) return before + (idx - r.start) + 1;
+    before += r.end - r.start + 1;
+  }
+  return null;
+}
+
+// For day startDate+k, session S contributes the unit at study-list position
+// startPos + (k - SESSION_OFFSETS[S]), when that position exists. startPos is
+// where startUnitIndex falls within the (possibly filtered) study list.
 // Each track counts from its own startDate, so tracks that began on
 // different dates coexist on the same calendar day.
 export function getItemsForTrack(date: Date, track: TrackConfig): ScheduleItem[] {
@@ -37,15 +84,19 @@ export function getItemsForTrack(date: Date, track: TrackConfig): ScheduleItem[]
   if (k < 0) return []; // before this track's start date
 
   const def = getTrackDefinition(track.trackType);
+  const ranges = buildStudyRanges(track, def);
+  const len = studyLength(ranges);
+  const startPos = unitIndexToPosition(ranges, track.startUnitIndex) ?? 1;
   const items: ScheduleItem[] = [];
 
   for (const session of SESSIONS) {
     const offset = SESSION_OFFSETS[session];
     if (k < offset) continue;
 
-    const unitIndex = track.startUnitIndex + (k - offset);
-    if (unitIndex < 1 || unitIndex > def.unitCount) continue;
+    const pos = startPos + (k - offset);
+    if (pos < 1 || pos > len) continue;
 
+    const unitIndex = positionToUnitIndex(ranges, pos);
     const unit = def.getUnitByIndex(unitIndex);
     if (unit) {
       items.push({

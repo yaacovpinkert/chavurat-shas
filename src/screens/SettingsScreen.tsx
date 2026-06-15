@@ -9,7 +9,7 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import PlatformDatePicker from "../components/PlatformDatePicker";
 import PlatformPicker from "../components/PlatformPicker";
-import UnitPicker from "../components/UnitPicker";
+import GroupSelector from "../components/GroupSelector";
 import {
   loadSettings,
   updateTrack,
@@ -21,7 +21,12 @@ import {
   AppSettings,
 } from "../store/storage";
 import { TrackConfig, TrackType } from "../tracks/types";
-import { getTrackDefinition, getAllTrackTypes, getDefaultPath } from "../tracks/registry";
+import {
+  getTrackDefinition,
+  getAllTrackTypes,
+  getAllGroupKeys,
+  startIndexForSelection,
+} from "../tracks/registry";
 import { formatDateString, parseDateString } from "../utils/schedule";
 import { toHebrewDate } from "../utils/hebrewDate";
 import { confirmAction, notify } from "../utils/dialog";
@@ -32,7 +37,7 @@ type Props = {
 
 type Editing =
   | { trackId: string; field: "date" }
-  | { trackId: string; field: "unit"; path: (string | number)[] }
+  | { trackId: string; field: "groups"; selected: string[] }
   | null;
 
 export default function SettingsScreen({ onReset }: Props) {
@@ -54,20 +59,21 @@ export default function SettingsScreen({ onReset }: Props) {
     setEditing(null);
   }
 
-  function startEditingUnit(track: TrackConfig) {
+  function startEditingGroups(track: TrackConfig) {
     const def = getTrackDefinition(track.trackType);
-    const unit = def.getUnitByIndex(track.startUnitIndex);
     setEditing({
       trackId: track.id,
-      field: "unit",
-      path: unit?.path ?? getDefaultPath(def),
+      field: "groups",
+      selected: track.selectedGroups ?? getAllGroupKeys(def),
     });
   }
 
-  async function handleUnitSave(track: TrackConfig, path: (string | number)[]) {
+  async function handleGroupsSave(track: TrackConfig, selected: string[]) {
+    if (selected.length === 0) return;
     const def = getTrackDefinition(track.trackType);
     const updated = await updateTrack(track.id, {
-      startUnitIndex: def.getIndexForPath(path),
+      selectedGroups: selected,
+      startUnitIndex: startIndexForSelection(def, selected),
     });
     setSettings(updated);
     setEditing(null);
@@ -85,6 +91,7 @@ export default function SettingsScreen({ onReset }: Props) {
         const updated = await updateTrack(track.id, {
           trackType: newType,
           startUnitIndex: 1,
+          selectedGroups: getAllGroupKeys(getTrackDefinition(newType)),
         });
         setSettings(updated);
         setEditing(null);
@@ -147,10 +154,14 @@ export default function SettingsScreen({ onReset }: Props) {
         const def = getTrackDefinition(track.trackType);
         const startUnit = def.getUnitByIndex(track.startUnitIndex);
         const startDateObj = parseDateString(track.startDate);
+        const totalGroups = getAllGroupKeys(def).length;
+        const selectedCount = track.selectedGroups
+          ? track.selectedGroups.length
+          : totalGroups;
         const isEditingDate =
           editing?.trackId === track.id && editing.field === "date";
-        const isEditingUnit =
-          editing?.trackId === track.id && editing.field === "unit";
+        const isEditingGroups =
+          editing?.trackId === track.id && editing.field === "groups";
 
         return (
           <View key={track.id} style={styles.card}>
@@ -184,29 +195,35 @@ export default function SettingsScreen({ onReset }: Props) {
               />
             )}
 
-            <Row label="נקודת התחלה" value={startUnit?.label ?? "—"} />
+            <Row label="מתחיל ב" value={startUnit?.label ?? "—"} />
             <Row
-              label="מיקום במסלול"
-              value={`${track.startUnitIndex} / ${def.unitCount}`}
+              label="מסכתות/ספרים נבחרים"
+              value={`${selectedCount} / ${totalGroups}`}
             />
             <TouchableOpacity
               style={styles.changeButton}
-              onPress={() => (isEditingUnit ? setEditing(null) : startEditingUnit(track))}
+              onPress={() => (isEditingGroups ? setEditing(null) : startEditingGroups(track))}
             >
               <Text style={styles.changeButtonText}>
-                {isEditingUnit ? "סגור" : "שנה נקודת התחלה"}
+                {isEditingGroups ? "סגור" : "שנה מסכתות/ספרים"}
               </Text>
             </TouchableOpacity>
-            {isEditingUnit && editing?.field === "unit" && (
+            {isEditingGroups && editing?.field === "groups" && (
               <View>
-                <UnitPicker
+                <GroupSelector
                   definition={def}
-                  path={editing.path}
-                  onChange={(p) => setEditing({ trackId: track.id, field: "unit", path: p })}
+                  selected={editing.selected}
+                  onChange={(s) =>
+                    setEditing({ trackId: track.id, field: "groups", selected: s })
+                  }
                 />
                 <TouchableOpacity
-                  style={styles.saveButton}
-                  onPress={() => handleUnitSave(track, editing.path)}
+                  style={[
+                    styles.saveButton,
+                    editing.selected.length === 0 && styles.saveButtonDisabled,
+                  ]}
+                  onPress={() => handleGroupsSave(track, editing.selected)}
+                  disabled={editing.selected.length === 0}
                 >
                   <Text style={styles.saveButtonText}>שמור</Text>
                 </TouchableOpacity>
@@ -337,6 +354,7 @@ const styles = StyleSheet.create({
     padding: 12,
     alignItems: "center",
   },
+  saveButtonDisabled: { backgroundColor: "#b8c8e8" },
   saveButtonText: { color: "#fff", fontWeight: "700", fontSize: 15 },
   removeButton: {
     marginTop: 12,
