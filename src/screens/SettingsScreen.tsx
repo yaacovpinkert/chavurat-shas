@@ -27,7 +27,7 @@ import {
   getAllGroupKeys,
   startIndexForSelection,
 } from "../tracks/registry";
-import { formatDateString, parseDateString } from "../utils/schedule";
+import { formatDateString, parseDateString, getTrackProgress } from "../utils/schedule";
 import { toHebrewDate } from "../utils/hebrewDate";
 import { confirmAction, notify } from "../utils/dialog";
 
@@ -154,10 +154,7 @@ export default function SettingsScreen({ onReset }: Props) {
         const def = getTrackDefinition(track.trackType);
         const startUnit = def.getUnitByIndex(track.startUnitIndex);
         const startDateObj = parseDateString(track.startDate);
-        const totalGroups = getAllGroupKeys(def).length;
-        const selectedCount = track.selectedGroups
-          ? track.selectedGroups.length
-          : totalGroups;
+        const progress = getTrackProgress(new Date(), track);
         const isEditingDate =
           editing?.trackId === track.id && editing.field === "date";
         const isEditingGroups =
@@ -196,9 +193,10 @@ export default function SettingsScreen({ onReset }: Props) {
             )}
 
             <Row label="מתחיל ב" value={startUnit?.label ?? "—"} />
-            <Row
-              label="מסכתות/ספרים נבחרים"
-              value={`${selectedCount} / ${totalGroups}`}
+            <ProgressRow
+              label="התקדמות בתכנית"
+              count={`${progress.current} / ${progress.total}`}
+              percent={`${progress.percent}%`}
             />
             <TouchableOpacity
               style={styles.changeButton}
@@ -298,6 +296,24 @@ function Row({ label, value }: { label: string; value: string }) {
   );
 }
 
+function ProgressRow({
+  label,
+  count,
+  percent,
+}: {
+  label: string;
+  count: string;
+  percent: string;
+}) {
+  return (
+    <View style={rowStyles.row}>
+      <Text style={rowStyles.value}>{percent}</Text>
+      <Text style={[rowStyles.value, rowStyles.progressCount]}>{count}</Text>
+      <Text style={rowStyles.label}>{label}</Text>
+    </View>
+  );
+}
+
 const rowStyles = StyleSheet.create({
   row: {
     flexDirection: "row",
@@ -309,6 +325,7 @@ const rowStyles = StyleSheet.create({
   },
   label: { fontSize: 15, color: "#888", textAlign: "right" },
   value: { fontSize: 15, fontWeight: "600", color: "#1a1a2e" },
+  progressCount: { flex: 1, textAlign: "center" },
 });
 
 const styles = StyleSheet.create({

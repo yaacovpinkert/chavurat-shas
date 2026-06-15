@@ -112,6 +112,29 @@ export function getItemsForTrack(date: Date, track: TrackConfig): ScheduleItem[]
   return items;
 }
 
+export type TrackProgress = {
+  current: number; // 1-based position reached within the selected program as of date
+  total: number; // total units in the selected program
+  percent: number; // 0-100, rounded
+};
+
+// Progress through the *selected* program (only the chosen books/masechtot),
+// measured by the session-1 frontier: on day k the new unit at study-list
+// position startPos + k is introduced, so that position is "where you are".
+export function getTrackProgress(date: Date, track: TrackConfig): TrackProgress {
+  const def = getTrackDefinition(track.trackType);
+  const ranges = buildStudyRanges(track, def);
+  const total = studyLength(ranges);
+  const startPos = unitIndexToPosition(ranges, track.startUnitIndex) ?? 1;
+
+  const start = startOfDay(parseDateString(track.startDate));
+  const k = differenceInCalendarDays(startOfDay(date), start);
+
+  const current = k < 0 ? 0 : Math.min(startPos + k, total);
+  const percent = total > 0 ? Math.round((current / total) * 100) : 0;
+  return { current, total, percent };
+}
+
 export function getItemsForDate(date: Date, settings: AppSettings): ScheduleItem[] {
   return settings.tracks.flatMap((track) => getItemsForTrack(date, track));
 }
