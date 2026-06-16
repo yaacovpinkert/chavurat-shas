@@ -26,7 +26,9 @@ import {
 import { loadSettings, loadProgress, markDone, unmarkDone, AppSettings, Progress } from "../store/storage";
 import HebrewCalendar, { DayMarking } from "../components/HebrewCalendar";
 import SessionBadge from "../components/SessionBadge";
+import theme from "../theme";
 
+// Semantic dot colors based on item count — these are functional indicators, not branding
 const DOT_COLORS = ["", "#4A90E2", "#F5A623", "#D0021B", "#7B2D8B"];
 
 export default function CalendarScreen() {
@@ -80,13 +82,13 @@ export default function CalendarScreen() {
         : { dotColor: DOT_COLORS[Math.min(items.length, 4)] };
     }
 
-    // Today is always highlighted
-    marks[today] = { ...(marks[today] ?? {}), selected: true, selectedColor: "#4A90E2" };
+    // Today is always highlighted with the primary accent
+    marks[today] = { ...(marks[today] ?? {}), selected: true, selectedColor: theme.colors.accent.primary };
 
     if (selectedDate) {
       const sel = formatDateString(selectedDate);
       if (sel !== today) {
-        marks[sel] = { ...(marks[sel] ?? {}), selected: true, selectedColor: "#1a1a2e" };
+        marks[sel] = { ...(marks[sel] ?? {}), selected: true, selectedColor: theme.colors.text.primary };
       }
     }
 
@@ -198,49 +200,47 @@ export default function CalendarScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#f0f4ff",
+    backgroundColor: theme.colors.background.primary,
   },
   calendarWrapper: {
-    marginHorizontal: 12,
-    marginTop: 12,
-    borderRadius: 12,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
+    marginHorizontal: theme.spacing.md,
+    marginTop: theme.spacing.md,
+    borderRadius: theme.borderRadius.lg,
+    ...theme.shadows.sm,
   },
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.3)",
   },
   bottomSheet: {
-    backgroundColor: "#fff",
+    backgroundColor: theme.colors.background.card,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    padding: 20,
+    padding: theme.spacing.xl,
     paddingBottom: 36,
     maxHeight: "60%",
   },
   sheetHandle: {
     width: 40,
     height: 4,
-    backgroundColor: "#ddd",
+    backgroundColor: theme.colors.border.medium,
     borderRadius: 2,
     alignSelf: "center",
-    marginBottom: 16,
+    marginBottom: theme.spacing.lg,
   },
   sheetHebrewDate: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#1a1a2e",
+    fontSize: theme.typography.sizes.xl,
+    fontFamily: theme.typography.fonts.bold,
+    color: theme.colors.text.primary,
     textAlign: "right",
     marginBottom: 2,
   },
   sheetGregorian: {
-    fontSize: 15,
-    color: "#555",
+    fontSize: theme.typography.sizes.base - 1,
+    fontFamily: theme.typography.fonts.body,
+    color: theme.colors.text.secondary,
     textAlign: "right",
-    marginBottom: 16,
+    marginBottom: theme.spacing.lg,
   },
   sheetScroll: {
     maxHeight: 260,
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor: theme.colors.border.light,
   },
   sheetItemDone: {
     opacity: 0.5,
@@ -260,45 +260,47 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sheetItemLabel: {
-    fontSize: 16,
-    color: "#1a1a2e",
+    fontSize: theme.typography.sizes.base,
+    fontFamily: theme.typography.fonts.semibold,
+    color: theme.colors.text.primary,
     textAlign: "right",
-    fontWeight: "600",
   },
   sheetItemLabelDone: {
     textDecorationLine: "line-through",
-    color: "#888",
+    color: theme.colors.text.hint,
   },
   sheetTrackChip: {
-    fontSize: 12,
-    color: "#7B2D8B",
+    fontSize: theme.typography.sizes.xs,
+    fontFamily: theme.typography.fonts.body,
+    color: theme.colors.session[5], // purple — semantic track identifier color
     textAlign: "right",
     marginTop: 2,
   },
   doneCheck: {
-    fontSize: 16,
-    color: "#7ED321",
-    fontWeight: "700",
+    fontSize: theme.typography.sizes.base,
+    fontFamily: theme.typography.fonts.bold,
+    color: theme.colors.semantic.success,
   },
   closeButton: {
-    marginTop: 16,
-    backgroundColor: "#f0f4ff",
-    borderRadius: 10,
-    padding: 12,
+    marginTop: theme.spacing.lg,
+    backgroundColor: theme.colors.background.section,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.md,
     alignItems: "center",
   },
   closeButtonText: {
-    fontSize: 16,
-    color: "#4A90E2",
-    fontWeight: "700",
+    fontSize: theme.typography.sizes.base,
+    fontFamily: theme.typography.fonts.bold,
+    color: theme.colors.accent.primary,
   },
   noItemsHint: {
-    padding: 20,
+    padding: theme.spacing.xl,
     alignItems: "center",
   },
   noItemsText: {
-    fontSize: 15,
-    color: "#888",
+    fontSize: theme.typography.sizes.base - 1,
+    fontFamily: theme.typography.fonts.body,
+    color: theme.colors.text.hint,
     textAlign: "center",
   },
 });

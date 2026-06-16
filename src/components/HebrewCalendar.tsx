@@ -20,6 +20,7 @@ import {
   prevHebrewMonth,
 } from "../utils/hebrewDate";
 import { formatDateString } from "../utils/schedule";
+import theme from "../theme";
 
 export type DayMarking = {
   dotColor?: string;
@@ -153,7 +154,7 @@ export default function HebrewCalendar({
                       styles.dayInner,
                       isToday && styles.todayInner,
                       marking.selected && {
-                        backgroundColor: marking.selectedColor ?? "#1a1a2e",
+                        backgroundColor: marking.selectedColor ?? theme.colors.text.primary,
                       },
                     ]}
                   >
@@ -186,8 +187,8 @@ export default function HebrewCalendar({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
+    backgroundColor: theme.colors.background.card,
+    borderRadius: theme.borderRadius.lg,
     paddingVertical: 10,
     paddingHorizontal: 6,
   },
@@ -195,26 +196,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 10,
-    marginBottom: 8,
+    marginBottom: theme.spacing.sm,
   },
   title: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#1a1a2e",
+    fontSize: theme.typography.sizes.xl,
+    fontFamily: theme.typography.fonts.bold,
+    color: theme.colors.text.primary,
     textAlign: "center",
   },
   arrowButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: "#f0f4ff",
+    backgroundColor: theme.colors.background.section,
     alignItems: "center",
     justifyContent: "center",
   },
   arrowText: {
     fontSize: 22,
-    color: "#4A90E2",
-    fontWeight: "700",
+    fontFamily: theme.typography.fonts.bold,
+    color: theme.colors.accent.primary,
     lineHeight: 26,
   },
   weekRow: {
@@ -226,9 +227,9 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   weekdayText: {
-    fontSize: 13,
-    color: "#555",
-    fontWeight: "600",
+    fontSize: theme.typography.sizes.xs,
+    fontFamily: theme.typography.fonts.semibold,
+    color: theme.colors.text.secondary,
   },
   dayCell: {
     flex: 1,
@@ -244,18 +245,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   todayInner: {
-    backgroundColor: "#4A90E2",
+    backgroundColor: theme.colors.accent.primary,
   },
   dayText: {
     fontSize: 15,
-    color: "#1a1a2e",
-    fontWeight: "600",
+    fontFamily: theme.typography.fonts.semibold,
+    color: theme.colors.text.primary,
   },
   todayText: {
-    color: "#fff",
+    color: theme.colors.background.card,
   },
   selectedText: {
-    color: "#fff",
+    color: theme.colors.background.card,
   },
   dotRow: {
     height: 8,
@@ -269,8 +270,8 @@ const styles = StyleSheet.create({
   },
   checkmarkText: {
     fontSize: 10,
-    color: "#7ED321",
-    fontWeight: "800",
+    fontFamily: theme.typography.fonts.extrabold,
+    color: theme.colors.semantic.success,
     lineHeight: 9,
   },
 });

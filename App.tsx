@@ -3,12 +3,14 @@ import { I18nManager, Platform, ActivityIndicator, View, Text, ScrollView, Style
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useFonts } from "@expo-google-fonts/heebo";
 
 import SetupScreen from "./src/screens/SetupScreen";
 import TodayScreen from "./src/screens/TodayScreen";
 import CalendarScreen from "./src/screens/CalendarScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import { loadSettings } from "./src/store/storage";
+import theme from "./src/theme";
 
 // The real RTL switch lives in app.json (extra.supportsRTL/forcesRTL via
 // expo-localization); these calls only cover a standalone first launch and
@@ -39,7 +41,7 @@ class ErrorBoundary extends Component<
       const err = this.state.error as Error;
       return (
         <ScrollView
-          style={{ flex: 1, backgroundColor: "#fff2f2" }}
+          style={{ flex: 1, backgroundColor: theme.colors.background.primary }}
           contentContainerStyle={{ padding: 20 }}
         >
           <Text style={eb.title}>שגיאה</Text>
@@ -53,9 +55,9 @@ class ErrorBoundary extends Component<
 }
 
 const eb = StyleSheet.create({
-  title: { fontSize: 20, fontWeight: "700", color: "#c00", marginBottom: 12 },
-  msg: { fontSize: 15, color: "#333", marginBottom: 12 },
-  stack: { fontSize: 11, color: "#666", fontFamily: "monospace" },
+  title: { fontSize: 20, fontWeight: theme.typography.weights.bold, color: theme.colors.semantic.danger, marginBottom: 12 },
+  msg: { fontSize: 15, color: theme.colors.text.secondary, marginBottom: 12 },
+  stack: { fontSize: 11, color: theme.colors.text.hint, fontFamily: theme.typography.fonts.mono },
 });
 
 // ─── Navigation ───────────────────────────────────────────────────────────
@@ -77,14 +79,14 @@ function MainApp({ onReset }: { onReset: () => void }) {
       <Tab.Navigator
         initialRouteName="Today"
         screenOptions={{
-          headerStyle: { backgroundColor: "#f0f4ff" },
+          headerStyle: { backgroundColor: theme.colors.background.primary },
           headerTitleAlign: "center",
-          headerTitleStyle: { fontWeight: "700", fontSize: 18 },
-          tabBarActiveTintColor: "#4A90E2",
-          tabBarInactiveTintColor: "#999",
+          headerTitleStyle: { fontWeight: theme.typography.weights.bold, fontSize: 18, fontFamily: theme.typography.fonts.heading },
+          tabBarActiveTintColor: theme.colors.accent.primary,
+          tabBarInactiveTintColor: theme.colors.text.hint,
           tabBarStyle: {
-            backgroundColor: "#fff",
-            borderTopColor: "#e8edf5",
+            backgroundColor: theme.colors.background.card,
+            borderTopColor: theme.colors.border.light,
           },
         }}
       >
@@ -129,23 +131,31 @@ function MainApp({ onReset }: { onReset: () => void }) {
 
 export default function App() {
   const [hasSettings, setHasSettings] = useState<boolean | null>(null);
+  const [fontsLoaded] = useFonts({
+    Heebo: require("./node_modules/@expo-google-fonts/heebo/400Regular/Heebo_400Regular.ttf"),
+    "Heebo-SemiBold": require("./node_modules/@expo-google-fonts/heebo/600SemiBold/Heebo_600SemiBold.ttf"),
+    "Heebo-Bold": require("./node_modules/@expo-google-fonts/heebo/700Bold/Heebo_700Bold.ttf"),
+    "Heebo-ExtraBold": require("./node_modules/@expo-google-fonts/heebo/800ExtraBold/Heebo_800ExtraBold.ttf"),
+  });
 
   useEffect(() => {
     loadSettings().then((s) => setHasSettings(s !== null));
   }, []);
 
+  const ready = fontsLoaded && hasSettings !== null;
+
   return (
     <ErrorBoundary>
       <SafeAreaProvider>
-        {hasSettings === null && (
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-            <ActivityIndicator size="large" color="#4A90E2" />
+        {!ready && (
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: theme.colors.background.primary }}>
+            <ActivityIndicator size="large" color={theme.colors.accent.primary} />
           </View>
         )}
-        {hasSettings === false && (
+        {ready && hasSettings === false && (
           <SetupScreen onComplete={() => setHasSettings(true)} />
         )}
-        {hasSettings === true && (
+        {ready && hasSettings === true && (
           <MainApp onReset={() => setHasSettings(false)} />
         )}
       </SafeAreaProvider>

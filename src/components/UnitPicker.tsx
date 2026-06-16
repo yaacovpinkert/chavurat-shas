@@ -2,6 +2,7 @@ import React from "react";
 import { Text, StyleSheet, View } from "react-native";
 import PlatformPicker from "./PlatformPicker";
 import { TrackDefinition } from "../tracks/types";
+import theme from "../theme";
 
 type Props = {
   definition: TrackDefinition;
@@ -40,11 +41,11 @@ export default function UnitPicker({ definition, path, onChange }: Props) {
 
 const styles = StyleSheet.create({
   pickerLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#444",
+    fontSize: theme.typography.sizes.sm,
+    fontFamily: theme.typography.fonts.semibold,
+    color: theme.colors.text.secondary,
     textAlign: "right",
-    marginTop: 12,
+    marginTop: theme.spacing.md,
     marginBottom: 2,
   },
 });

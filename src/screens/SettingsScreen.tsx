@@ -30,6 +30,7 @@ import {
 import { formatDateString, parseDateString, getTrackProgress } from "../utils/schedule";
 import { toHebrewDate } from "../utils/hebrewDate";
 import { confirmAction, notify } from "../utils/dialog";
+import theme from "../theme";
 
 type Props = {
   onReset: () => void;
@@ -278,7 +279,7 @@ export default function SettingsScreen({ onReset }: Props) {
           style={[styles.dangerButton, styles.dangerButtonFull]}
           onPress={confirmFullReset}
         >
-          <Text style={[styles.dangerButtonText, { color: "#fff" }]}>
+          <Text style={[styles.dangerButtonText, { color: theme.colors.background.card }]}>
             התחל מחדש (מחק הכל)
           </Text>
         </TouchableOpacity>
@@ -321,87 +322,107 @@ const rowStyles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor: theme.colors.border.light,
   },
-  label: { fontSize: 15, color: "#888", textAlign: "right" },
-  value: { fontSize: 15, fontWeight: "600", color: "#1a1a2e" },
+  label: { fontSize: 15, fontFamily: theme.typography.fonts.body, color: theme.colors.text.hint, textAlign: "right" },
+  value: { fontSize: 15, fontFamily: theme.typography.fonts.semibold, color: theme.colors.text.primary },
   progressCount: { flex: 1, textAlign: "center" },
 });
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#f0f4ff" },
-  container: { padding: 16, paddingBottom: 40 },
+  screen: { flex: 1, backgroundColor: theme.colors.background.primary },
+  container: { padding: theme.spacing.lg, paddingBottom: 40 },
   card: {
-    backgroundColor: "#fff",
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    backgroundColor: theme.colors.background.card,
+    borderRadius: theme.borderRadius.xl,
+    padding: theme.spacing.lg,
+    marginBottom: theme.spacing.lg,
+    ...theme.shadows.sm,
   },
   trackTitle: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: "#1a1a2e",
+    fontSize: theme.typography.sizes.lg,
+    fontFamily: theme.typography.fonts.extrabold,
+    color: theme.colors.text.primary,
     textAlign: "right",
-    marginBottom: 8,
+    marginBottom: theme.spacing.sm,
   },
   pickerLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#444",
+    fontSize: theme.typography.sizes.sm,
+    fontFamily: theme.typography.fonts.semibold,
+    color: theme.colors.text.secondary,
     textAlign: "right",
     marginBottom: 2,
   },
   changeButton: {
-    marginTop: 8,
-    marginBottom: 8,
-    backgroundColor: "#f0f4ff",
-    borderRadius: 8,
+    marginTop: theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
+    backgroundColor: theme.colors.background.section,
+    borderRadius: theme.borderRadius.md,
     padding: 10,
     alignItems: "center",
   },
-  changeButtonText: { color: "#4A90E2", fontWeight: "700", fontSize: 15 },
+  changeButtonText: {
+    color: theme.colors.accent.primary,
+    fontFamily: theme.typography.fonts.bold,
+    fontSize: theme.typography.sizes.base - 1,
+  },
   saveButton: {
-    marginTop: 12,
-    backgroundColor: "#4A90E2",
-    borderRadius: 8,
-    padding: 12,
+    marginTop: theme.spacing.md,
+    backgroundColor: theme.colors.accent.primary,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.md,
     alignItems: "center",
   },
-  saveButtonDisabled: { backgroundColor: "#b8c8e8" },
-  saveButtonText: { color: "#fff", fontWeight: "700", fontSize: 15 },
+  saveButtonDisabled: { backgroundColor: theme.colors.accent.light },
+  saveButtonText: {
+    color: theme.colors.background.card,
+    fontFamily: theme.typography.fonts.bold,
+    fontSize: theme.typography.sizes.base - 1,
+  },
   removeButton: {
-    marginTop: 12,
+    marginTop: theme.spacing.md,
     borderWidth: 1.5,
-    borderColor: "#D0021B",
-    borderRadius: 8,
+    borderColor: theme.colors.semantic.danger,
+    borderRadius: theme.borderRadius.md,
     padding: 10,
     alignItems: "center",
   },
-  removeButtonText: { color: "#D0021B", fontWeight: "700", fontSize: 14 },
-  addButton: {
-    backgroundColor: "#fff",
-    borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: "#4A90E2",
-    borderStyle: "dashed",
-    padding: 16,
-    alignItems: "center",
-    marginBottom: 16,
+  removeButtonText: {
+    color: theme.colors.semantic.danger,
+    fontFamily: theme.typography.fonts.bold,
+    fontSize: theme.typography.sizes.sm,
   },
-  addButtonText: { color: "#4A90E2", fontWeight: "700", fontSize: 16 },
-  addCardButtons: { marginTop: 8, gap: 8 },
+  addButton: {
+    backgroundColor: theme.colors.background.card,
+    borderRadius: theme.borderRadius.xl,
+    borderWidth: 1.5,
+    borderColor: theme.colors.accent.border,
+    borderStyle: "dashed",
+    padding: theme.spacing.lg,
+    alignItems: "center",
+    marginBottom: theme.spacing.lg,
+  },
+  addButtonText: {
+    color: theme.colors.accent.primary,
+    fontFamily: theme.typography.fonts.bold,
+    fontSize: theme.typography.sizes.base,
+  },
+  addCardButtons: { marginTop: theme.spacing.sm, gap: theme.spacing.sm },
   dangerButton: {
     borderWidth: 1.5,
-    borderColor: "#D0021B",
-    borderRadius: 8,
-    padding: 12,
+    borderColor: theme.colors.semantic.danger,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.md,
     alignItems: "center",
-    marginTop: 8,
+    marginTop: theme.spacing.sm,
   },
-  dangerButtonFull: { backgroundColor: "#D0021B", borderColor: "#D0021B" },
-  dangerButtonText: { color: "#D0021B", fontWeight: "700", fontSize: 15 },
+  dangerButtonFull: {
+    backgroundColor: theme.colors.semantic.danger,
+    borderColor: theme.colors.semantic.danger,
+  },
+  dangerButtonText: {
+    color: theme.colors.semantic.danger,
+    fontFamily: theme.typography.fonts.bold,
+    fontSize: theme.typography.sizes.base - 1,
+  },
 });

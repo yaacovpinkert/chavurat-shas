@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { ScheduleItem } from "../utils/schedule";
 import SessionBadge from "./SessionBadge";
+import theme from "../theme";
 
 type Props = {
   item: ScheduleItem;
@@ -40,16 +41,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#fff",
-    borderRadius: 10,
+    backgroundColor: theme.colors.background.card,
+    borderRadius: theme.borderRadius.lg,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    marginBottom: 8,
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
+    marginBottom: theme.spacing.sm,
+    ...theme.shadows.xs,
   },
   rowDone: {
     opacity: 0.6,
@@ -64,19 +61,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   label: {
-    fontSize: 17,
-    fontWeight: "600",
-    color: "#1a1a2e",
+    fontSize: theme.typography.sizes.lg,
+    fontFamily: theme.typography.fonts.semibold,
+    color: theme.colors.text.primary,
     textAlign: "right",
     writingDirection: "rtl",
   },
   labelDone: {
     textDecorationLine: "line-through",
-    color: "#888",
+    color: theme.colors.text.hint,
   },
   trackChip: {
-    fontSize: 12,
-    color: "#7B2D8B",
+    fontSize: theme.typography.sizes.xs,
+    fontFamily: theme.typography.fonts.body,
+    color: theme.colors.session[5], // purple — semantic track identifier color
     textAlign: "right",
     writingDirection: "rtl",
     marginTop: 2,
@@ -86,18 +84,18 @@ const styles = StyleSheet.create({
     height: 26,
     borderRadius: 13,
     borderWidth: 2,
-    borderColor: "#ccc",
+    borderColor: theme.colors.border.medium,
     alignItems: "center",
     justifyContent: "center",
     marginStart: 10,
   },
   checkboxDone: {
-    backgroundColor: "#4A90E2",
-    borderColor: "#4A90E2",
+    backgroundColor: theme.colors.accent.primary,
+    borderColor: theme.colors.accent.primary,
   },
   checkmark: {
-    color: "#fff",
+    color: theme.colors.background.card,
     fontSize: 14,
-    fontWeight: "700",
+    fontFamily: theme.typography.fonts.bold,
   },
 });

@@ -19,6 +19,7 @@ import {
 import { saveSettings, newTrackId } from "../store/storage";
 import { formatDateString } from "../utils/schedule";
 import { toHebrewDate, toHebrewYMD } from "../utils/hebrewDate";
+import theme from "../theme";
 
 type Props = {
   onComplete: () => void;
@@ -97,18 +98,18 @@ export default function SetupScreen({ onComplete }: Props) {
           <HebrewCalendar
             year={calYear}
             month={calMonth}
-            markings={{ [formatDateString(startDate)]: { selected: true, selectedColor: "#4A90E2" } }}
+            markings={{ [formatDateString(startDate)]: { selected: true, selectedColor: theme.colors.accent.primary } }}
             onDayPress={(date) => setStartDate(date)}
             onMonthChange={(ym) => { setCalYear(ym.year); setCalMonth(ym.month); }}
             highlightToday={false}
           />
 
           <View style={styles.buttonRow}>
+                        <TouchableOpacity style={styles.nextButton} onPress={() => setStep(3)}>
+              <Text style={styles.nextButtonText}>הבא</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
               <Text style={styles.backButtonText}>חזור</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.nextButton} onPress={() => setStep(3)}>
-              <Text style={styles.nextButtonText}>הבא</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -126,15 +127,15 @@ export default function SetupScreen({ onComplete }: Props) {
           />
 
           <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.backButton} onPress={() => setStep(2)}>
-              <Text style={styles.backButtonText}>חזור</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+                        <TouchableOpacity
               style={[styles.nextButton, selectedGroups.length === 0 && styles.nextButtonDisabled]}
               onPress={handleConfirm}
               disabled={selectedGroups.length === 0}
             >
               <Text style={styles.nextButtonText}>התחל !</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.backButton} onPress={() => setStep(2)}>
+              <Text style={styles.backButtonText}>חזור</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -146,86 +147,84 @@ export default function SetupScreen({ onComplete }: Props) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#f0f4ff",
+    backgroundColor: theme.colors.background.primary,
     alignItems: "center",
     justifyContent: "center",
-    padding: 20,
+    padding: theme.spacing.xl,
   },
   title: {
-    fontSize: 36,
-    fontWeight: "900",
-    color: "#1a1a2e",
-    marginBottom: 4,
+    fontSize: theme.typography.sizes.xxxxl,
+    fontFamily: theme.typography.fonts.extrabold,
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.xs,
     textAlign: "center",
   },
   subtitle: {
-    fontSize: 18,
-    color: "#555",
+    fontSize: theme.typography.sizes.lg,
+    fontFamily: theme.typography.fonts.body,
+    color: theme.colors.text.secondary,
     marginBottom: 30,
     textAlign: "center",
   },
   card: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 24,
+    backgroundColor: theme.colors.background.card,
+    borderRadius: theme.borderRadius.xxl,
+    padding: theme.spacing.xxl,
     width: "100%",
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 4,
+    ...theme.shadows.md,
   },
   sectionTitle: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#1a1a2e",
+    fontSize: theme.typography.sizes.xxl,
+    fontFamily: theme.typography.fonts.bold,
+    color: theme.colors.text.primary,
     textAlign: "right",
-    marginBottom: 6,
+    marginBottom: theme.spacing.sm,
   },
   hint: {
-    fontSize: 14,
-    color: "#888",
+    fontSize: theme.typography.sizes.sm,
+    fontFamily: theme.typography.fonts.body,
+    color: theme.colors.text.hint,
     textAlign: "right",
-    marginBottom: 20,
+    marginBottom: theme.spacing.xl,
   },
   selectedDate: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#4A90E2",
+    fontSize: theme.typography.sizes.lg,
+    fontFamily: theme.typography.fonts.bold,
+    color: theme.colors.accent.primary,
     textAlign: "center",
-    marginBottom: 12,
+    marginBottom: theme.spacing.md,
   },
   buttonRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 24,
-    gap: 12,
+    marginTop: theme.spacing.xxl,
+    gap: theme.spacing.md,
   },
   nextButton: {
-    backgroundColor: "#4A90E2",
-    borderRadius: 10,
+    backgroundColor: theme.colors.accent.primary,
+    borderRadius: theme.borderRadius.lg,
     padding: 14,
     flex: 1,
     alignItems: "center",
   },
   nextButtonDisabled: {
-    backgroundColor: "#b8c8e8",
+    backgroundColor: theme.colors.accent.light,
   },
   backButton: {
-    backgroundColor: "#eee",
-    borderRadius: 10,
+    backgroundColor: theme.colors.background.disabled,
+    borderRadius: theme.borderRadius.lg,
     padding: 14,
     flex: 1,
     alignItems: "center",
   },
   nextButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "700",
+    color: theme.colors.background.card,
+    fontSize: theme.typography.sizes.base,
+    fontFamily: theme.typography.fonts.bold,
   },
   backButtonText: {
-    color: "#555",
-    fontSize: 16,
-    fontWeight: "600",
+    color: theme.colors.text.secondary,
+    fontSize: theme.typography.sizes.base,
+    fontFamily: theme.typography.fonts.semibold,
   },
 });

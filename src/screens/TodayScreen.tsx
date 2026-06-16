@@ -18,6 +18,7 @@ import {
   AppSettings,
   Progress,
 } from "../store/storage";
+import theme from "../theme";
 
 export default function TodayScreen() {
   const [settings, setSettings] = useState<AppSettings | null>(null);
@@ -131,7 +132,7 @@ export default function TodayScreen() {
 
 function ProgressRing({ done, total }: { done: number; total: number }) {
   const pct = total === 0 ? 0 : done / total;
-  const color = done === total && total > 0 ? "#7ED321" : "#4A90E2";
+  const color = done === total && total > 0 ? theme.colors.semantic.success : theme.colors.accent.primary;
   return (
     <View style={[styles.ring, { borderColor: color }]}>
       <Text style={[styles.ringText, { color }]}>
@@ -144,20 +145,20 @@ function ProgressRing({ done, total }: { done: number; total: number }) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#f0f4ff",
+    backgroundColor: theme.colors.background.primary,
   },
   container: {
-    padding: 16,
+    padding: theme.spacing.lg,
     paddingBottom: 40,
   },
   header: {
-    marginBottom: 20,
+    marginBottom: theme.spacing.xl,
     alignItems: "flex-end",
   },
   hebrewDate: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#1a1a2e",
+    fontSize: theme.typography.sizes.xxl,
+    fontFamily: theme.typography.fonts.bold,
+    color: theme.colors.text.primary,
     textAlign: "right",
   },
   progressRow: {
@@ -165,12 +166,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-end",
     gap: 12,
-    marginBottom: 16,
+    marginBottom: theme.spacing.lg,
   },
   progressText: {
-    fontSize: 16,
-    color: "#444",
-    fontWeight: "600",
+    fontSize: theme.typography.sizes.base,
+    fontFamily: theme.typography.fonts.semibold,
+    color: theme.colors.text.secondary,
   },
   ring: {
     width: 54,
@@ -181,18 +182,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   ringText: {
-    fontSize: 13,
-    fontWeight: "700",
+    fontSize: theme.typography.sizes.xs,
+    fontFamily: theme.typography.fonts.bold,
   },
   emptyBox: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 24,
+    backgroundColor: theme.colors.background.card,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.xxl,
     alignItems: "center",
+    ...theme.shadows.xs,
   },
   emptyText: {
-    fontSize: 16,
-    color: "#888",
+    fontSize: theme.typography.sizes.base,
+    fontFamily: theme.typography.fonts.body,
+    color: theme.colors.text.hint,
     textAlign: "center",
   },
 });
