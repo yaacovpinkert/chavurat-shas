@@ -46,10 +46,6 @@ type Cell = {
   dateString?: string;
 };
 
-// Weeks are kept in logical Sunday-first order; this direction puts Sunday
-// physically on the right whether or not native RTL is active.
-const rowDir = { flexDirection: I18nManager.isRTL ? ("row" as const) : ("row-reverse" as const) };
-
 export default function HebrewCalendar({
   year,
   month,
@@ -58,6 +54,7 @@ export default function HebrewCalendar({
   onMonthChange,
   highlightToday = true,
 }: Props) {
+  const rowDir = { flexDirection: I18nManager.isRTL ? ("row" as const) : ("row-reverse" as const) };
   const todayJDN = dateToJDN(new Date());
 
   const weeks = useMemo<Cell[][]>(() => {

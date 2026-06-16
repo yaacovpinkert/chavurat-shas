@@ -104,7 +104,7 @@ function Checkbox({ state }: { state: "on" | "off" | "partial" }) {
 
 const styles = StyleSheet.create({
   masterRow: {
-    flexDirection: "row-reverse",
+    flexDirection: "row",
     alignItems: "center",
     paddingVertical: 12,
     borderBottomWidth: 1,
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   },
   section: { marginTop: theme.spacing.sm },
   sectionHeader: {
-    flexDirection: "row-reverse",
+    flexDirection: "row",
     alignItems: "center",
     paddingVertical: theme.spacing.sm,
     backgroundColor: theme.colors.background.section,
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   groupRow: {
-    flexDirection: "row-reverse",
+    flexDirection: "row",
     alignItems: "center",
     paddingVertical: 10,
     paddingHorizontal: theme.spacing.sm,

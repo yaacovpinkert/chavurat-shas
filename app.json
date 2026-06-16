@@ -7,7 +7,11 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "ExpoLocalization_supportsRTL": true,
+        "ExpoLocalization_forcesRTL": true
+      }
     },
     "android": {
       "package": "com.pinkert.chavarutshas",
@@ -25,12 +29,15 @@
     },
     "plugins": [
       "@react-native-community/datetimepicker",
-      "expo-localization",
+      ["expo-localization", { "supportsRTL": true }],
       "expo-font"
     ],
     "extra": {
       "supportsRTL": true,
-      "forcesRTL": true
+      "forcesRTL": true,
+      "eas": {
+        "projectId": "d084d0d6-1aab-4483-854b-816484649ce2"
+      }
     }
   }
 }

@@ -90,20 +90,15 @@ function MainApp({ onReset }: { onReset: () => void }) {
           },
         }}
       >
-        {/* Screens are declared in reverse so the tab bar reads right-to-left:
-            היום · לוח שנה · הגדרות. The bottom-tab bar lays tabs out in
-            declaration order (left→right) and ignores tabBarStyle.flexDirection,
-            so order is controlled here. initialRouteName keeps היום as landing. */}
         <Tab.Screen
-          name="Settings"
+          name="Today"
+          component={TodayScreen}
           options={{
-            title: "הגדרות",
-            tabBarLabel: "הגדרות",
-            tabBarIcon: ({ color }) => <TabIcon label="הגדרות" color={color} />,
+            title: "היום",
+            tabBarLabel: "היום",
+            tabBarIcon: ({ color }) => <TabIcon label="היום" color={color} />,
           }}
-        >
-          {() => <SettingsScreen onReset={onReset} />}
-        </Tab.Screen>
+        />
         <Tab.Screen
           name="Calendar"
           component={CalendarScreen}
@@ -114,14 +109,15 @@ function MainApp({ onReset }: { onReset: () => void }) {
           }}
         />
         <Tab.Screen
-          name="Today"
-          component={TodayScreen}
+          name="Settings"
           options={{
-            title: "היום",
-            tabBarLabel: "היום",
-            tabBarIcon: ({ color }) => <TabIcon label="היום" color={color} />,
+            title: "הגדרות",
+            tabBarLabel: "הגדרות",
+            tabBarIcon: ({ color }) => <TabIcon label="הגדרות" color={color} />,
           }}
-        />
+        >
+          {() => <SettingsScreen onReset={onReset} />}
+        </Tab.Screen>
       </Tab.Navigator>
     </NavigationContainer>
   );
