@@ -10,6 +10,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.pinkert.chavarutshas",
       "adaptiveIcon": {
         "backgroundColor": "#F5F0E8",
         "foregroundImage": "./assets/android-icon-foreground.png",
