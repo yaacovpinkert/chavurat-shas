@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
+import { Text, StyleSheet, View, TouchableOpacity, I18nManager } from "react-native";
 import { TrackDefinition } from "../tracks/types";
 import theme from "../theme";
 
@@ -71,7 +71,7 @@ export default function GroupSelector({ definition, selected, onChange }: Props)
               return (
                 <TouchableOpacity
                   key={g.key}
-                  style={styles.groupRow}
+                  style={[styles.groupRow, { flexDirection: I18nManager.isRTL ? "row" : "row-reverse" }]}
                   onPress={() => toggleGroup(g.key)}
                 >
                   <Checkbox state={selectedSet.has(g.key) ? "on" : "off"} />

@@ -159,7 +159,6 @@ export default function CalendarScreen() {
                     onPress={() => handleToggleItem(item)}
                     activeOpacity={0.6}
                   >
-                    <SessionBadge session={item.session} />
                     <View style={styles.sheetItemLabels}>
                       <Text
                         style={[styles.sheetItemLabel, done && styles.sheetItemLabelDone]}
@@ -171,6 +170,7 @@ export default function CalendarScreen() {
                       )}
                     </View>
                     {done && <Text style={styles.doneCheck}>✓</Text>}
+                    <SessionBadge session={item.session} />
                   </TouchableOpacity>
                 );
               })}

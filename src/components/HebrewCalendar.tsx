@@ -109,7 +109,7 @@ export default function HebrewCalendar({
           onPress={() => onMonthChangeRef.current("prev")}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Text style={styles.arrowText}>›</Text>
+          <Text style={styles.arrowText}>‹</Text>
         </TouchableOpacity>
         <Text style={styles.title}>{title}</Text>
         <TouchableOpacity
@@ -117,7 +117,7 @@ export default function HebrewCalendar({
           onPress={() => onMonthChangeRef.current("next")}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Text style={styles.arrowText}>‹</Text>
+          <Text style={styles.arrowText}>›</Text>
         </TouchableOpacity>
       </View>
 

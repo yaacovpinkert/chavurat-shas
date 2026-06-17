@@ -291,8 +291,8 @@ export default function SettingsScreen({ onReset }: Props) {
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <View style={rowStyles.row}>
-      <Text style={rowStyles.value}>{value}</Text>
       <Text style={rowStyles.label}>{label}</Text>
+      <Text style={rowStyles.value}>{value}</Text>
     </View>
   );
 }
@@ -308,9 +308,9 @@ function ProgressRow({
 }) {
   return (
     <View style={rowStyles.row}>
-      <Text style={rowStyles.value}>{percent}</Text>
-      <Text style={[rowStyles.value, rowStyles.progressCount]}>{count}</Text>
       <Text style={rowStyles.label}>{label}</Text>
+      <Text style={[rowStyles.value, rowStyles.progressCount]}>{count}</Text>
+      <Text style={rowStyles.value}>{percent}</Text>
     </View>
   );
 }
