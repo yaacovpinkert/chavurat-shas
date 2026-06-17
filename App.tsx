@@ -1,5 +1,5 @@
 import React, { Component, ErrorInfo, ReactNode, useEffect, useState } from "react";
-import { I18nManager, Platform, ActivityIndicator, View, Text, ScrollView, StyleSheet } from "react-native";
+import { I18nManager, Platform, Text, ScrollView, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -9,6 +9,7 @@ import SetupScreen from "./src/screens/SetupScreen";
 import TodayScreen from "./src/screens/TodayScreen";
 import CalendarScreen from "./src/screens/CalendarScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
+import SplashScreen from "./src/components/SplashScreen";
 import { loadSettings } from "./src/store/storage";
 import theme from "./src/theme";
 
@@ -141,22 +142,18 @@ export default function App() {
     loadSettings().then((s) => setHasSettings(s !== null));
   }, []);
 
-  const ready = fontsLoaded && hasSettings !== null;
+  const appReady = fontsLoaded && hasSettings !== null;
 
   return (
     <ErrorBoundary>
       <SafeAreaProvider>
-        {!ready && (
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: theme.colors.background.primary }}>
-            <ActivityIndicator size="large" color={theme.colors.accent.primary} />
-          </View>
-        )}
-        {ready && hasSettings === false && (
+        {appReady && hasSettings === false && (
           <SetupScreen onComplete={() => setHasSettings(true)} />
         )}
-        {ready && hasSettings === true && (
+        {appReady && hasSettings === true && (
           <MainApp onReset={() => setHasSettings(false)} />
         )}
+        <SplashScreen visible={!appReady} />
       </SafeAreaProvider>
     </ErrorBoundary>
   );
