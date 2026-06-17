@@ -148,23 +148,26 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.primary,
   },
   container: {
+    // RTL root for the whole screen — cascades to every descendant via Yoga.
+    direction: "rtl",
     padding: theme.spacing.lg,
     paddingBottom: 40,
   },
   header: {
     marginBottom: theme.spacing.xl,
-    alignItems: "flex-end",
+    alignItems: "flex-start",
   },
   hebrewDate: {
     fontSize: theme.typography.sizes.xxl,
     fontFamily: theme.typography.fonts.bold,
     color: theme.colors.text.primary,
-    textAlign: "right",
+    writingDirection: "rtl",
   },
   progressRow: {
+    // ring on the right, "X/Y הושלמו" text to its left (RTL inherited)
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-end",
+    justifyContent: "flex-start",
     gap: 12,
     marginBottom: theme.spacing.lg,
   },

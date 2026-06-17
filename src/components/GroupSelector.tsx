@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Text, StyleSheet, View, TouchableOpacity, I18nManager } from "react-native";
+import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import { TrackDefinition } from "../tracks/types";
 import theme from "../theme";
 
@@ -71,7 +71,7 @@ export default function GroupSelector({ definition, selected, onChange }: Props)
               return (
                 <TouchableOpacity
                   key={g.key}
-                  style={[styles.groupRow, { flexDirection: I18nManager.isRTL ? "row" : "row-reverse" }]}
+                  style={styles.groupRow}
                   onPress={() => toggleGroup(g.key)}
                 >
                   <Checkbox state={selectedSet.has(g.key) ? "on" : "off"} />
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.sizes.lg,
     fontFamily: theme.typography.fonts.extrabold,
     color: theme.colors.text.primary,
-    marginRight: 10,
+    marginStart: 10,
   },
   section: { marginTop: theme.spacing.sm },
   sectionHeader: {
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.sizes.base,
     fontFamily: theme.typography.fonts.bold,
     color: theme.colors.accent.primary,
-    marginRight: 10,
+    marginStart: 10,
   },
   groupRow: {
     flexDirection: "row",
@@ -144,9 +144,9 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.sizes.base - 1,
     fontFamily: theme.typography.fonts.body,
     color: theme.colors.text.primary,
-    marginRight: 10,
+    marginHorizontal: 10,
     flex: 1,
-    textAlign: "right",
+    writingDirection: "rtl",
   },
   groupCount: {
     fontSize: theme.typography.sizes.xs,

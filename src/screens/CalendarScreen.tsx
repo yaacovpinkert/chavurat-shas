@@ -199,6 +199,8 @@ export default function CalendarScreen() {
 
 const styles = StyleSheet.create({
   screen: {
+    // RTL root for the whole screen — cascades to every descendant via Yoga.
+    direction: "rtl",
     flex: 1,
     backgroundColor: theme.colors.background.primary,
   },
@@ -213,6 +215,10 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.3)",
   },
   bottomSheet: {
+    // A Modal renders in its own root that does NOT inherit the screen's RTL
+    // direction on Android — set it here so the whole sheet (and its text)
+    // lays out RTL.
+    direction: "rtl",
     backgroundColor: theme.colors.background.card,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -232,20 +238,21 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.sizes.xl,
     fontFamily: theme.typography.fonts.bold,
     color: theme.colors.text.primary,
-    textAlign: "right",
+    writingDirection: "rtl",
     marginBottom: 2,
   },
   sheetGregorian: {
     fontSize: theme.typography.sizes.base - 1,
     fontFamily: theme.typography.fonts.body,
     color: theme.colors.text.secondary,
-    textAlign: "right",
+    writingDirection: "rtl",
     marginBottom: theme.spacing.lg,
   },
   sheetScroll: {
     maxHeight: 260,
   },
   sheetItem: {
+    // label block on the right, session badge on the left (RTL inherited from sheet)
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
@@ -263,7 +270,7 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.sizes.base,
     fontFamily: theme.typography.fonts.semibold,
     color: theme.colors.text.primary,
-    textAlign: "right",
+    writingDirection: "rtl",
   },
   sheetItemLabelDone: {
     textDecorationLine: "line-through",
@@ -273,7 +280,7 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.sizes.xs,
     fontFamily: theme.typography.fonts.body,
     color: theme.colors.session[5], // purple — semantic track identifier color
-    textAlign: "right",
+    writingDirection: "rtl",
     marginTop: 2,
   },
   doneCheck: {

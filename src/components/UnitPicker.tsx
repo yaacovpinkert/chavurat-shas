@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.sizes.sm,
     fontFamily: theme.typography.fonts.semibold,
     color: theme.colors.text.secondary,
-    textAlign: "right",
+    writingDirection: "rtl",
     marginTop: theme.spacing.md,
     marginBottom: 2,
   },

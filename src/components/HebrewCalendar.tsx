@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  I18nManager,
   PanResponder,
 } from "react-native";
 import {
@@ -54,7 +53,7 @@ export default function HebrewCalendar({
   onMonthChange,
   highlightToday = true,
 }: Props) {
-  const rowDir = { flexDirection: I18nManager.isRTL ? ("row" as const) : ("row-reverse" as const) };
+  const rowDir = { direction: "rtl" as const, flexDirection: "row" as const };
   const todayJDN = dateToJDN(new Date());
 
   const weeks = useMemo<Cell[][]>(() => {

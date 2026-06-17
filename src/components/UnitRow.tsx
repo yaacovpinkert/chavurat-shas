@@ -18,8 +18,10 @@ export default function UnitRow({ item, done, onToggle, showTrackName }: Props) 
       onPress={onToggle}
       activeOpacity={0.7}
     >
+      <View style={[styles.checkbox, done && styles.checkboxDone]}>
+        {done && <Text style={styles.checkmark}>✓</Text>}
+      </View>
       <View style={styles.main}>
-        <SessionBadge session={item.session} />
         <View style={styles.labels}>
           <Text style={[styles.label, done && styles.labelDone]}>
             {item.unit.label}
@@ -28,9 +30,7 @@ export default function UnitRow({ item, done, onToggle, showTrackName }: Props) 
             <Text style={styles.trackChip}>{item.trackName}</Text>
           )}
         </View>
-      </View>
-      <View style={[styles.checkbox, done && styles.checkboxDone]}>
-        {done && <Text style={styles.checkmark}>✓</Text>}
+        <SessionBadge session={item.session} />
       </View>
     </TouchableOpacity>
   );
@@ -38,6 +38,8 @@ export default function UnitRow({ item, done, onToggle, showTrackName }: Props) 
 
 const styles = StyleSheet.create({
   row: {
+    // RTL is inherited from the screen root: checkbox lands on the right (first
+    // child), then the label block, with the badge on the far left.
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -52,6 +54,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   main: {
+    // label block on the right, session badge on the far left (RTL inherited)
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
@@ -64,7 +67,6 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.sizes.lg,
     fontFamily: theme.typography.fonts.semibold,
     color: theme.colors.text.primary,
-    textAlign: "right",
     writingDirection: "rtl",
   },
   labelDone: {
@@ -75,7 +77,6 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.sizes.xs,
     fontFamily: theme.typography.fonts.body,
     color: theme.colors.session[5], // purple — semantic track identifier color
-    textAlign: "right",
     writingDirection: "rtl",
     marginTop: 2,
   },
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border.medium,
     alignItems: "center",
     justifyContent: "center",
-    marginStart: 10,
+    marginEnd: 10,
   },
   checkboxDone: {
     backgroundColor: theme.colors.accent.primary,

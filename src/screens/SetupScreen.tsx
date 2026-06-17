@@ -105,11 +105,11 @@ export default function SetupScreen({ onComplete }: Props) {
           />
 
           <View style={styles.buttonRow}>
-                        <TouchableOpacity style={styles.nextButton} onPress={() => setStep(3)}>
-              <Text style={styles.nextButtonText}>הבא</Text>
-            </TouchableOpacity>
             <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
               <Text style={styles.backButtonText}>חזור</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.nextButton} onPress={() => setStep(3)}>
+              <Text style={styles.nextButtonText}>הבא</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -127,15 +127,15 @@ export default function SetupScreen({ onComplete }: Props) {
           />
 
           <View style={styles.buttonRow}>
-                        <TouchableOpacity
+            <TouchableOpacity style={styles.backButton} onPress={() => setStep(2)}>
+              <Text style={styles.backButtonText}>חזור</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               style={[styles.nextButton, selectedGroups.length === 0 && styles.nextButtonDisabled]}
               onPress={handleConfirm}
               disabled={selectedGroups.length === 0}
             >
               <Text style={styles.nextButtonText}>התחל !</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.backButton} onPress={() => setStep(2)}>
-              <Text style={styles.backButtonText}>חזור</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -146,6 +146,8 @@ export default function SetupScreen({ onComplete }: Props) {
 
 const styles = StyleSheet.create({
   container: {
+    // RTL root for the whole screen — cascades to every descendant via Yoga.
+    direction: "rtl",
     flexGrow: 1,
     backgroundColor: theme.colors.background.primary,
     alignItems: "center",
@@ -177,14 +179,14 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.sizes.xxl,
     fontFamily: theme.typography.fonts.bold,
     color: theme.colors.text.primary,
-    textAlign: "right",
+    writingDirection: "rtl",
     marginBottom: theme.spacing.sm,
   },
   hint: {
     fontSize: theme.typography.sizes.sm,
     fontFamily: theme.typography.fonts.body,
     color: theme.colors.text.hint,
-    textAlign: "right",
+    writingDirection: "rtl",
     marginBottom: theme.spacing.xl,
   },
   selectedDate: {
@@ -195,6 +197,7 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
   },
   buttonRow: {
+    // Back button lands on the right, Next on the left (RTL inherited)
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: theme.spacing.xxl,

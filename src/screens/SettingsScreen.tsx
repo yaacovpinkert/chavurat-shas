@@ -196,7 +196,7 @@ export default function SettingsScreen({ onReset }: Props) {
             <Row label="מתחיל ב" value={startUnit?.label ?? "—"} />
             <ProgressRow
               label="התקדמות בתכנית"
-              count={`${progress.current} / ${progress.total}`}
+              count={`${progress.total} / ${progress.current}`}
               percent={`${progress.percent}%`}
             />
             <TouchableOpacity
@@ -317,6 +317,7 @@ function ProgressRow({
 
 const rowStyles = StyleSheet.create({
   row: {
+    // label on the right, value on the left (RTL inherited from screen root)
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -324,14 +325,15 @@ const rowStyles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
   },
-  label: { fontSize: 15, fontFamily: theme.typography.fonts.body, color: theme.colors.text.hint, textAlign: "right" },
+  label: { fontSize: 15, fontFamily: theme.typography.fonts.body, color: theme.colors.text.hint, writingDirection: "rtl" },
   value: { fontSize: 15, fontFamily: theme.typography.fonts.semibold, color: theme.colors.text.primary },
   progressCount: { flex: 1, textAlign: "center" },
 });
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.colors.background.primary },
-  container: { padding: theme.spacing.lg, paddingBottom: 40 },
+  // RTL root for the whole screen — cascades to every descendant via Yoga.
+  container: { direction: "rtl", padding: theme.spacing.lg, paddingBottom: 40 },
   card: {
     backgroundColor: theme.colors.background.card,
     borderRadius: theme.borderRadius.xl,
@@ -343,14 +345,14 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.sizes.lg,
     fontFamily: theme.typography.fonts.extrabold,
     color: theme.colors.text.primary,
-    textAlign: "right",
+    writingDirection: "rtl",
     marginBottom: theme.spacing.sm,
   },
   pickerLabel: {
     fontSize: theme.typography.sizes.sm,
     fontFamily: theme.typography.fonts.semibold,
     color: theme.colors.text.secondary,
-    textAlign: "right",
+    writingDirection: "rtl",
     marginBottom: 2,
   },
   changeButton: {

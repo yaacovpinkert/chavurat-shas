@@ -12,12 +12,15 @@ import SettingsScreen from "./src/screens/SettingsScreen";
 import { loadSettings } from "./src/store/storage";
 import theme from "./src/theme";
 
-// The real RTL switch lives in app.json (extra.supportsRTL/forcesRTL via
-// expo-localization); these calls only cover a standalone first launch and
-// take effect on the next native start.
-if (Platform.OS !== "web") {
-  I18nManager.allowRTL(true);
-  I18nManager.forceRTL(true);
+// Force RTL on every platform so layout direction is consistent. On native
+// (app.json extra.supportsRTL/forcesRTL via expo-localization) this also takes
+// effect on the next native start; on web we set the document direction so
+// react-native-web lays out RTL like native does.
+I18nManager.allowRTL(true);
+I18nManager.forceRTL(true);
+if (Platform.OS === "web" && typeof document !== "undefined") {
+  document.documentElement.setAttribute("dir", "rtl");
+  document.documentElement.setAttribute("lang", "he");
 }
 
 // ─── Error Boundary ───────────────────────────────────────────────────────
