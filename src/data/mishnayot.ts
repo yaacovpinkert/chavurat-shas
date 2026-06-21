@@ -132,6 +132,13 @@ function hebrewOrdinal(n: number): string {
   return HEBREW_NUMERALS[n] ?? String(n);
 }
 
+// Format abbreviated perek/mishna label with ״ before the last letter.
+// e.g. prefix="פ" n=1 → "פ״א", n=11 → "פי״א"
+function hebrewAbbrev(prefix: string, n: number): string {
+  const letters = hebrewOrdinal(n);
+  return `${prefix}${letters.slice(0, -1)}״${letters.slice(-1)}`;
+}
+
 // Build flat list once at module load
 let _flatList: MishnaEntry[] | null = null;
 
@@ -153,7 +160,7 @@ export function getAllMishnayot(): MishnaEntry[] {
             masechet: masechet.name,
             perek: perekNum,
             mishna: m,
-            label: `${masechet.name} פ״${hebrewOrdinal(perekNum)} מ״${hebrewOrdinal(m)}`,
+            label: `${masechet.name} ${hebrewAbbrev("פ", perekNum)} ${hebrewAbbrev("מ", m)}`,
           });
           globalIndex++;
         }
