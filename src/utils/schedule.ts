@@ -113,24 +113,34 @@ export function getItemsForTrack(date: Date, track: TrackConfig): ScheduleItem[]
 }
 
 export type TrackProgress = {
-  current: number; // 1-based position reached within the selected program as of date
-  total: number; // total units in the selected program
+  current: number; // days elapsed into the full program (learning + chazara)
+  total: number; // total days for the full program to complete
   percent: number; // 0-100, rounded
 };
 
-// Progress through the *selected* program (only the chosen books/masechtot),
-// measured by the session-1 frontier: on day k the new unit at study-list
-// position startPos + k is introduced, so that position is "where you are".
+// The last session offset — chazara ends 128 days after a unit is first introduced.
+const LAST_SESSION_OFFSET = SESSION_OFFSETS[5];
+
+// Progress through the *full* program (learning + all chazara sessions),
+// measured in days. Day 0 = first unit introduced; the program ends when
+// the last unit completes its final review (session 5), which is
+// (unitsRemaining - 1 + LAST_SESSION_OFFSET) days from start.
 export function getTrackProgress(date: Date, track: TrackConfig): TrackProgress {
   const def = getTrackDefinition(track.trackType);
   const ranges = buildStudyRanges(track, def);
-  const total = studyLength(ranges);
+  const len = studyLength(ranges);
   const startPos = unitIndexToPosition(ranges, track.startUnitIndex) ?? 1;
+
+  // Number of units this track will introduce (from startPos to end of study list).
+  const unitsToLearn = len - startPos + 1;
+  // Total program length in days: introduce last unit on day (unitsToLearn-1),
+  // then wait LAST_SESSION_OFFSET more days for its final review.
+  const total = Math.max(unitsToLearn - 1 + LAST_SESSION_OFFSET, 0);
 
   const start = startOfDay(parseDateString(track.startDate));
   const k = differenceInCalendarDays(startOfDay(date), start);
 
-  const current = k < 0 ? 0 : Math.min(startPos + k, total);
+  const current = k < 0 ? 0 : Math.min(k, total);
   const percent = total > 0 ? Math.round((current / total) * 100) : 0;
   return { current, total, percent };
 }

@@ -7,7 +7,8 @@ export type TrackType =
   | "mishnaPerek"
   | "bavliDaf"
   | "bavliAmud"
-  | "tanachPerek";
+  | "tanachPerek"
+  | "rambamPerek";
 
 export type TrackUnit = {
   index: number; // 1-based within the track

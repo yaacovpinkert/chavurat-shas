@@ -33,6 +33,15 @@ import {
   getIndexForTanachChapter,
   getTanachGroups,
 } from "../data/tanach";
+import {
+  getRambamBooks,
+  getHalakhotForBook,
+  getChapterCountForHalakha,
+  getRambamChapterByIndex,
+  getRambamChapterCount,
+  getIndexForRambamChapter,
+  getRambamGroups,
+} from "../data/rambam";
 import { formatHebrewDay } from "../utils/hebrewDate";
 
 function rangeOptions(count: number, labelPrefix: string, from = 1) {
@@ -290,12 +299,56 @@ const tanachPerekTrack: TrackDefinition = {
   ],
 };
 
+const rambamPerekTrack: TrackDefinition = {
+  type: "rambamPerek",
+  name: "רמב״ם יומי - משנה תורה",
+  unitCount: getRambamChapterCount(),
+  getUnitByIndex(index): TrackUnit | undefined {
+    const e = getRambamChapterByIndex(index);
+    return e && { index, label: e.label, path: [e.book, e.halakha, e.chapter] };
+  },
+  getIndexForPath(path) {
+    const [book, halakha, chapter] = path as [string, string, number];
+    return getIndexForRambamChapter(book, halakha, chapter);
+  },
+  getSections() {
+    return buildSections(
+      getRambamGroups().map((g) => ({
+        sectionLabel: g.book,
+        key: g.halakha,
+        startIndex: g.startIndex,
+        endIndex: g.endIndex,
+      }))
+    );
+  },
+  pickerLevels: [
+    {
+      key: "book",
+      title: "ספר",
+      getOptions: () => getRambamBooks().map((b) => ({ label: b, value: b })),
+    },
+    {
+      key: "halakha",
+      title: "הלכות",
+      getOptions: ([book]) =>
+        getHalakhotForBook(book as string).map((h) => ({ label: h, value: h })),
+    },
+    {
+      key: "chapter",
+      title: "פרק",
+      getOptions: ([book, halakha]) =>
+        rangeOptions(getChapterCountForHalakha(book as string, halakha as string), "פרק"),
+    },
+  ],
+};
+
 const TRACKS: Record<TrackType, TrackDefinition> = {
   mishna: mishnaTrack,
   mishnaPerek: mishnaPerekTrack,
   bavliDaf: bavliDafTrack,
   bavliAmud: bavliAmudTrack,
   tanachPerek: tanachPerekTrack,
+  rambamPerek: rambamPerekTrack,
 };
 
 export function getTrackDefinition(type: TrackType): TrackDefinition {

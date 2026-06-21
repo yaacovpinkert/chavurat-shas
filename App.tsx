@@ -1,5 +1,5 @@
 import React, { Component, ErrorInfo, ReactNode, useEffect, useState } from "react";
-import { I18nManager, Platform, Text, ScrollView, StyleSheet } from "react-native";
+import { I18nManager, Platform, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -10,8 +10,12 @@ import TodayScreen from "./src/screens/TodayScreen";
 import CalendarScreen from "./src/screens/CalendarScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import SplashScreen from "./src/components/SplashScreen";
+import AboutModal from "./src/components/AboutModal";
 import { loadSettings } from "./src/store/storage";
+import { setupNotificationHandler } from "./src/utils/notifications";
 import theme from "./src/theme";
+
+setupNotificationHandler();
 
 // Force RTL on every platform so layout direction is consistent. On native
 // (app.json extra.supportsRTL/forcesRTL via expo-localization) this also takes
@@ -77,7 +81,38 @@ function TabIcon({ label, color }: { label: string; color: string }) {
   return <Text style={{ fontSize: 18, color }}>{icons[label] ?? "•"}</Text>;
 }
 
+function AboutButton({ onPress }: { onPress: () => void }) {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={about.button}
+      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+      accessibilityLabel="אודות"
+      accessibilityRole="button"
+    >
+      <Text style={about.icon}>ⓘ</Text>
+    </TouchableOpacity>
+  );
+}
+
+const about = StyleSheet.create({
+  button: {
+    marginHorizontal: theme.spacing.lg,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  icon: {
+    fontSize: 24,
+    lineHeight: 28,
+    color: theme.colors.accent.primary,
+  },
+});
+
 function MainApp({ onReset }: { onReset: () => void }) {
+  const [aboutVisible, setAboutVisible] = useState(false);
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -86,6 +121,9 @@ function MainApp({ onReset }: { onReset: () => void }) {
           headerStyle: { backgroundColor: theme.colors.background.primary },
           headerTitleAlign: "center",
           headerTitleStyle: { fontWeight: theme.typography.weights.bold, fontSize: 18, fontFamily: theme.typography.fonts.heading },
+          // Under forced RTL the header swaps sides: headerLeft renders at the
+          // visual upper-right corner, which is where we want the "i" button.
+          headerLeft: () => <AboutButton onPress={() => setAboutVisible(true)} />,
           tabBarActiveTintColor: theme.colors.accent.primary,
           tabBarInactiveTintColor: theme.colors.text.hint,
           tabBarStyle: {
@@ -123,6 +161,7 @@ function MainApp({ onReset }: { onReset: () => void }) {
           {() => <SettingsScreen onReset={onReset} />}
         </Tab.Screen>
       </Tab.Navigator>
+      <AboutModal visible={aboutVisible} onClose={() => setAboutVisible(false)} />
     </NavigationContainer>
   );
 }

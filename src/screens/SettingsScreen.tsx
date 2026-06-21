@@ -5,6 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Switch,
+  Platform,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import PlatformDatePicker from "../components/PlatformDatePicker";
@@ -18,7 +20,9 @@ import {
   resetProgress,
   clearAll,
   newTrackId,
+  updateNotificationSettings,
   AppSettings,
+  NotificationSettings,
 } from "../store/storage";
 import { TrackConfig, TrackType } from "../tracks/types";
 import {
@@ -30,6 +34,7 @@ import {
 import { formatDateString, parseDateString, getTrackProgress } from "../utils/schedule";
 import { toHebrewDate } from "../utils/hebrewDate";
 import { confirmAction, notify } from "../utils/dialog";
+import { scheduleDaily } from "../utils/notifications";
 import theme from "../theme";
 
 type Props = {
@@ -41,18 +46,44 @@ type Editing =
   | { trackId: string; field: "groups"; selected: string[] }
   | null;
 
+const DEFAULT_NOTIF: NotificationSettings = { enabled: false, hour: 8, minute: 0 };
+
 export default function SettingsScreen({ onReset }: Props) {
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [editing, setEditing] = useState<Editing>(null);
   const [addingTrack, setAddingTrack] = useState(false);
   const [newTrackType, setNewTrackType] = useState<TrackType>("mishna");
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
       loadSettings().then(setSettings);
       setEditing(null);
+      setShowTimePicker(false);
     }, [])
   );
+
+  const notif: NotificationSettings = settings?.notification ?? DEFAULT_NOTIF;
+
+  async function handleNotifToggle(enabled: boolean) {
+    const next: NotificationSettings = { ...notif, enabled };
+    const updated = await updateNotificationSettings(next);
+    if (updated) setSettings(updated);
+    await scheduleDaily(next);
+    if (!enabled) setShowTimePicker(false);
+  }
+
+  async function handleNotifTimeChange(date: Date) {
+    const next: NotificationSettings = {
+      ...notif,
+      hour: date.getHours(),
+      minute: date.getMinutes(),
+    };
+    const updated = await updateNotificationSettings(next);
+    if (updated) setSettings(updated);
+    if (next.enabled) await scheduleDaily(next);
+    setShowTimePicker(false);
+  }
 
   async function handleDateChange(track: TrackConfig, date: Date) {
     const updated = await updateTrack(track.id, { startDate: formatDateString(date) });
@@ -196,7 +227,7 @@ export default function SettingsScreen({ onReset }: Props) {
             <Row label="מתחיל ב" value={startUnit?.label ?? "—"} />
             <ProgressRow
               label="התקדמות בתכנית"
-              count={`${progress.total} / ${progress.current}`}
+              count={`${progress.total} / ${progress.current} ימים`}
               percent={`${progress.percent}%`}
             />
             <TouchableOpacity
@@ -270,6 +301,40 @@ export default function SettingsScreen({ onReset }: Props) {
           <Text style={styles.addButtonText}>+ הוסף מסלול</Text>
         </TouchableOpacity>
       )}
+
+      <View style={styles.card}>
+        <Text style={styles.trackTitle}>תזכורת יומית</Text>
+        <View style={styles.notifRow}>
+          <Text style={styles.notifLabel}>שלח תזכורת יומית</Text>
+          <Switch
+            value={notif.enabled}
+            onValueChange={handleNotifToggle}
+            trackColor={{ false: theme.colors.border.light, true: theme.colors.accent.primary }}
+            thumbColor={theme.colors.background.card}
+          />
+        </View>
+        {notif.enabled && (
+          <>
+            <TouchableOpacity
+              style={styles.changeButton}
+              onPress={() => setShowTimePicker((v) => !v)}
+            >
+              <Text style={styles.changeButtonText}>
+                {showTimePicker
+                  ? "סגור"
+                  : `שעת תזכורת: ${String(notif.hour).padStart(2, "0")}:${String(notif.minute).padStart(2, "0")}`}
+              </Text>
+            </TouchableOpacity>
+            {showTimePicker && (
+              <PlatformDatePicker
+                value={(() => { const d = new Date(); d.setHours(notif.hour, notif.minute, 0, 0); return d; })()}
+                onChange={handleNotifTimeChange}
+                mode="time"
+              />
+            )}
+          </>
+        )}
+      </View>
 
       <View style={styles.card}>
         <TouchableOpacity style={styles.dangerButton} onPress={confirmResetProgress}>
@@ -410,6 +475,18 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.sizes.base,
   },
   addCardButtons: { marginTop: theme.spacing.sm, gap: theme.spacing.sm },
+  notifRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: theme.spacing.sm,
+  },
+  notifLabel: {
+    fontSize: theme.typography.sizes.base,
+    fontFamily: theme.typography.fonts.semibold,
+    color: theme.colors.text.primary,
+    writingDirection: "rtl",
+  },
   dangerButton: {
     borderWidth: 1.5,
     borderColor: theme.colors.semantic.danger,

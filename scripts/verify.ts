@@ -13,6 +13,7 @@ import {
 import { getDafCount, getAmudCount, getDafByIndex, getAmudByIndex } from "../src/data/bavli";
 import { getTanachChapterCount, getTanachChapterByIndex } from "../src/data/tanach";
 import { getPerekCount, getMishnaCount, getPerekByIndex } from "../src/data/mishnayot";
+import { getRambamChapterCount, getRambamChapterByIndex } from "../src/data/rambam";
 import { getTrackDefinition, getAllTrackTypes } from "../src/tracks/registry";
 
 let failures = 0;
@@ -30,11 +31,13 @@ check("bavli dapim = 2711", getDafCount() === 2711, getDafCount());
 check("bavli amudim = 5422", getAmudCount() === 5422, getAmudCount());
 check("tanach chapters = 929", getTanachChapterCount() === 929, getTanachChapterCount());
 check("mishna perakim = 525", getPerekCount() === 525, getPerekCount());
+check("rambam chapters = 1000", getRambamChapterCount() === 1000, getRambamChapterCount());
 console.log("mishnayot count:", getMishnaCount());
 console.log("first daf:", getDafByIndex(1)?.label, "| last daf:", getDafByIndex(2711)?.label);
 console.log("amud 1:", getAmudByIndex(1)?.label, "| amud 2:", getAmudByIndex(2)?.label, "| last:", getAmudByIndex(5422)?.label);
 console.log("first perek:", getPerekByIndex(1)?.label, "| last:", getPerekByIndex(525)?.label);
 console.log("tanach 1:", getTanachChapterByIndex(1)?.label, "| 929:", getTanachChapterByIndex(929)?.label);
+console.log("rambam 1:", getRambamChapterByIndex(1)?.label, "| 1000:", getRambamChapterByIndex(1000)?.label);
 
 // ── track sections / group ranges (selective study) ──
 // Each track's groups must be contiguous, non-overlapping, cover [1, unitCount]

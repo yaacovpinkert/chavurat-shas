@@ -7,9 +7,16 @@ const PROGRESS_VERSION_KEY = "@chavurat_shas:progress_v";
 
 export type SessionNumber = 1 | 2 | 3 | 4 | 5;
 
+export type NotificationSettings = {
+  enabled: boolean;
+  hour: number;
+  minute: number;
+};
+
 export type AppSettings = {
   version: 2;
   tracks: TrackConfig[];
+  notification?: NotificationSettings;
 };
 
 export type Progress = {
@@ -183,4 +190,14 @@ export async function resetProgress(trackId?: string): Promise<void> {
 
 export async function clearAll(): Promise<void> {
   await AsyncStorage.multiRemove([SETTINGS_KEY, PROGRESS_KEY, PROGRESS_VERSION_KEY]);
+}
+
+export async function updateNotificationSettings(
+  notif: NotificationSettings
+): Promise<AppSettings | null> {
+  const settings = await loadSettings();
+  if (!settings) return null;
+  settings.notification = notif;
+  await saveSettings(settings);
+  return settings;
 }

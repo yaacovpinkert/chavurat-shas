@@ -5,20 +5,31 @@ import theme from "../theme";
 type Props = {
   value: Date;
   onChange: (date: Date) => void;
+  mode?: "date" | "time";
 };
 
-export default function PlatformDatePicker({ value, onChange }: Props) {
+export default function PlatformDatePicker({ value, onChange, mode = "date" }: Props) {
   if (Platform.OS === "web") {
-    const iso = value.toISOString().slice(0, 10);
+    const webValue =
+      mode === "time"
+        ? `${String(value.getHours()).padStart(2, "0")}:${String(value.getMinutes()).padStart(2, "0")}`
+        : value.toISOString().slice(0, 10);
     return (
       <View style={styles.webWrapper}>
         {/* @ts-ignore – web-only input element */}
         <input
-          type="date"
-          value={iso}
+          type={mode}
+          value={webValue}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            const d = new Date(e.target.value + "T12:00:00");
-            if (!isNaN(d.getTime())) onChange(d);
+            if (mode === "time") {
+              const [h, m] = e.target.value.split(":").map(Number);
+              const d = new Date(value);
+              d.setHours(h, m, 0, 0);
+              onChange(d);
+            } else {
+              const d = new Date(e.target.value + "T12:00:00");
+              if (!isNaN(d.getTime())) onChange(d);
+            }
           }}
           style={webInputStyle}
         />
@@ -31,9 +42,9 @@ export default function PlatformDatePicker({ value, onChange }: Props) {
   return (
     <DateTimePicker
       value={value}
-      mode="date"
+      mode={mode}
       display="default"
-      onChange={(_: any, date?: Date) => { if (date) onChange(date); }}
+      onValueChange={(_: any, date?: Date) => { if (date) onChange(date); }}
       locale="he"
     />
   );
