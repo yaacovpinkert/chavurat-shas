@@ -11,6 +11,7 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import PlatformDatePicker from "../components/PlatformDatePicker";
 import PlatformPicker from "../components/PlatformPicker";
+import HebrewCalendar from "../components/HebrewCalendar";
 import GroupSelector from "../components/GroupSelector";
 import {
   loadSettings,
@@ -32,7 +33,7 @@ import {
   startIndexForSelection,
 } from "../tracks/registry";
 import { formatDateString, parseDateString, getTrackProgress } from "../utils/schedule";
-import { toHebrewDate } from "../utils/hebrewDate";
+import { toHebrewDate, toHebrewYMD, HebrewYM } from "../utils/hebrewDate";
 import { confirmAction, notify } from "../utils/dialog";
 import { scheduleDaily } from "../utils/notifications";
 import theme from "../theme";
@@ -51,6 +52,10 @@ const DEFAULT_NOTIF: NotificationSettings = { enabled: false, hour: 8, minute: 0
 export default function SettingsScreen({ onReset }: Props) {
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [editing, setEditing] = useState<Editing>(null);
+  const [calendarMonth, setCalendarMonth] = useState<HebrewYM>(() => {
+    const h = toHebrewYMD(new Date());
+    return { year: h.year, month: h.month };
+  });
   const [addingTrack, setAddingTrack] = useState(false);
   const [newTrackType, setNewTrackType] = useState<TrackType>("mishna");
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -209,18 +214,28 @@ export default function SettingsScreen({ onReset }: Props) {
             <Row label="תאריך התחלה" value={toHebrewDate(startDateObj).full} />
             <TouchableOpacity
               style={styles.changeButton}
-              onPress={() =>
-                setEditing(isEditingDate ? null : { trackId: track.id, field: "date" })
-              }
+              onPress={() => {
+                if (isEditingDate) {
+                  setEditing(null);
+                } else {
+                  const h = toHebrewYMD(startDateObj);
+                  setCalendarMonth({ year: h.year, month: h.month });
+                  setEditing({ trackId: track.id, field: "date" });
+                }
+              }}
             >
               <Text style={styles.changeButtonText}>
                 {isEditingDate ? "סגור" : "שנה תאריך"}
               </Text>
             </TouchableOpacity>
             {isEditingDate && (
-              <PlatformDatePicker
-                value={startDateObj}
-                onChange={(d) => handleDateChange(track, d)}
+              <HebrewCalendar
+                year={calendarMonth.year}
+                month={calendarMonth.month}
+                markings={{}}
+                onDayPress={(date) => handleDateChange(track, date)}
+                onMonthChange={setCalendarMonth}
+                highlightToday={false}
               />
             )}
 
