@@ -15,9 +15,9 @@ A cross-platform mobile app for tracking daily study of Jewish texts with intell
   - דף יומי בגמרא (Daily Talmud page)
   - עמוד יומי בגמרא (Daily Talmud side/amud)
   - פרק יומי בתנ״ך (Daily Bible chapter)
-  -  רב״ם (Rambam's Mishneh Torah by chapter)
+  - רמב"ם יומי (Rambam's Mishneh Torah by chapter)
 - **Per-track book/tractate selection** — Choose exactly which masechtot or books to include in each track; the scheduler maps through your selection seamlessly
-- **6-session spaced-repetition schedule** — Each unit is reviewed on days 0, 1, 8, 38, 128, plus an annual review on the Hebrew calendar anniversary of first study (13th month forward, preserving the day across leap years)
+- **6-session spaced-repetition schedule** — Each unit is reviewed on days 0, 1, 8, 38, 128, plus an annual review on the Hebrew calendar anniversary of first study (13th month forward)
 - **Hebrew calendar date picker** — Set your start date by picking directly from a Hebrew calendar view
 - **Hebrew calendar overview** — Navigate study progress by Hebrew date with day-by-day modal details
 - **Progress tracking** — See completion count and percentage per track in the settings screen
