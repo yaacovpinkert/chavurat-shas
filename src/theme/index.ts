@@ -36,6 +36,7 @@ const theme = {
       3: "#F5A623",
       4: "#D0021B",
       5: "#7B2D8B",
+      6: "#0E7C7B", // teal — annual Hebrew-anniversary review (חזרה ה׳)
     } as Record<number, string>,
   },
 

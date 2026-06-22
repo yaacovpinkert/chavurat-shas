@@ -9,6 +9,7 @@ const SESSION_LABELS: Record<SessionNumber, string> = {
   3: "חזרה ב׳",
   4: "חזרה ג׳",
   5: "חזרה ד׳",
+  6: "חזרה ה׳",
 };
 
 type Props = {

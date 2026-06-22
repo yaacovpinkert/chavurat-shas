@@ -5,7 +5,9 @@ const SETTINGS_KEY = "@chavurat_shas:settings";
 const PROGRESS_KEY = "@chavurat_shas:progress";
 const PROGRESS_VERSION_KEY = "@chavurat_shas:progress_v";
 
-export type SessionNumber = 1 | 2 | 3 | 4 | 5;
+// Keep in sync with SessionNumber in src/utils/schedule.ts (kept separate to
+// avoid a circular import — schedule.ts already imports AppSettings from here).
+export type SessionNumber = 1 | 2 | 3 | 4 | 5 | 6;
 
 export type NotificationSettings = {
   enabled: boolean;

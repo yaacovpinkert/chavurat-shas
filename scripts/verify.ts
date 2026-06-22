@@ -15,6 +15,8 @@ import { getTanachChapterCount, getTanachChapterByIndex } from "../src/data/tana
 import { getPerekCount, getMishnaCount, getPerekByIndex } from "../src/data/mishnayot";
 import { getRambamChapterCount, getRambamChapterByIndex } from "../src/data/rambam";
 import { getTrackDefinition, getAllTrackTypes } from "../src/tracks/registry";
+import { hebrewAnniversary, getItemsForTrack } from "../src/utils/schedule";
+import { TrackConfig } from "../src/tracks/types";
 
 let failures = 0;
 function check(name: string, cond: boolean, extra?: unknown) {
@@ -125,6 +127,64 @@ check("10.6.2026 = כ\"ה בסיון", toHebrewDate(new Date(2026, 5, 10)).short
     firstWeekdayOfHebrewMonth(5786, 3) === g.getDay(),
     `${firstWeekdayOfHebrewMonth(5786, 3)} vs ${g.getDay()} (${g.toDateString()})`
   );
+}
+
+// ── session 6: annual review = exactly 12 Hebrew months forward by position ──
+// Helper: assert source Hebrew (sy,sm,sd) maps 12 months forward to (ty,tm,td).
+function checkAnniversary(
+  name: string,
+  sy: number, sm: number, sd: number,
+  ty: number, tm: number, td: number
+) {
+  const h = toHebrewYMD(hebrewAnniversary(hebrewToGregorian(sy, sm, sd)));
+  check(
+    name,
+    h.year === ty && h.month === tm && h.day === td,
+    `got ${h.day}/${getHebrewMonthName(h.month, h.year)}/${h.year}`
+  );
+}
+
+// Both years regular: 12 months forward is the same named month next year.
+checkAnniversary("ט\"ו ניסן (reg) → ט\"ו ניסן next year", 5785, 1, 15, 5786, 1, 15);
+
+// Regular → leap: the extra month shifts the landing earlier by name.
+// 5786 regular, 5787 leap. Adar(reg,12) → Adar I(leap,12), same position.
+checkAnniversary("אדר (reg) → אדר א׳ (leap)", 5786, 12, 10, 5787, 12, 10);
+// Nisan(reg,1) lands 12 positions on → Adar II(leap,13) of the leap year.
+checkAnniversary("ניסן (reg) → אדר ב׳ (leap)", 5786, 1, 8, 5787, 13, 8);
+
+// Leap → regular: the discriminating cases vs the old yahrzeit rule.
+// 5784 leap, 5785 regular. Adar I(leap,12) → Shevat(reg,11) — NOT regular Adar.
+checkAnniversary("אדר א׳ (leap) → שבט (reg)", 5784, 12, 9, 5785, 11, 9);
+// Adar II(leap,13) → Adar(reg,12).
+checkAnniversary("אדר ב׳ (leap) → אדר (reg)", 5784, 13, 7, 5785, 12, 7);
+
+// Anniversary is always ~one Hebrew year (353–385 days) after the source.
+{
+  let allInRange = true;
+  for (let i = 0; i < 365 * 3; i++) {
+    const src = new Date(2024, 0, 1 + i);
+    const gap = (hebrewAnniversary(src).getTime() - src.getTime()) / 86400000;
+    if (gap < 353 || gap > 386) { allInRange = false; break; }
+  }
+  check("anniversary gap is one Hebrew year (353–386 days)", allInRange);
+}
+
+// Inverse round-trip: every study day's session-6 review must surface on its own
+// anniversary via getItemsForTrack — no unit is ever lost, even where the Adar
+// or short-month (Cheshvan/Kislev 30→29) clamp makes two study days share a day.
+{
+  const track = {
+    id: "t1", trackType: "bavliDaf", startDate: "2024-01-01", startUnitIndex: 1,
+  } as TrackConfig;
+  let missing = 0;
+  for (let n = 0; n < 365 * 3; n++) {
+    const studyDate = new Date(2024, 0, 1 + n);
+    const s6 = getItemsForTrack(hebrewAnniversary(studyDate), track)
+      .filter((i) => i.session === 6);
+    if (!s6.some((i) => i.unit.index === n + 1)) missing++;
+  }
+  check("every study day's anniversary review is preserved", missing === 0, `${missing} missing`);
 }
 
 console.log(failures === 0 ? "\nALL CHECKS PASSED" : `\n${failures} FAILURES`);
