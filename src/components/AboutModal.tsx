@@ -52,13 +52,13 @@ export default function AboutModal({ visible, onClose }: Props) {
 
             <Text style={styles.heading}>שיטת החזרות</Text>
             <Text style={styles.paragraph}>
-              לאחר הלימוד הראשון חוזרים על החומר בארבעה מועדים קבועים:
+              לאחר הלימוד הראשון חוזרים על החומר בחמישה מועדים קבועים:
             </Text>
             <Text style={styles.bullet}>• פעם ראשונה — תוך 24 שעות</Text>
-            <Text style={styles.bullet}>• פעם שנייה — כעבור שבוע</Text>
+            <Text style={styles.bullet}>• פעם שניה — כעבור שבוע</Text>
             <Text style={styles.bullet}>• פעם שלישית — כעבור חודש</Text>
             <Text style={styles.bullet}>• פעם רביעית — כעבור 3 חודשים</Text>
-
+            <Text style={styles.bullet}>• פעם חמישית — כעבור שנה</Text> 
             <Text style={styles.heading}>איך משתמשים באפליקציה?</Text>
             <Text style={styles.paragraph}>
               במסך "היום" מופיע מה צריך ללמוד ולחזור היום. סמנו כל פריט בסיום
@@ -67,8 +67,18 @@ export default function AboutModal({ visible, onClose }: Props) {
             </Text>
             <Text style={styles.paragraph}>
               במסך "לוח שנה" ניתן לראות את כל מועדי הלימוד והחזרה לאורך החודש,
-              ולסמן פריטים גם לימים אחרים. במסך "הגדרות" קובעים את תוכנית
+              ולסמן פריטים גם לימים אחרים.
+              </Text>
+            <Text style={styles.paragraph}>
+              במסך "הגדרות" קובעים את תוכנית
               הלימוד האישית.
+            </Text>
+            <Text style={styles.heading}>אודות</Text>
+            <Text style={styles.paragraph}>
+              אפליקציה זו נוצרה על ידי <Text style={{ fontFamily: theme.typography.fonts.bold }}>יעקב חיים פינקרט</Text>, מתוך אהבה והערכה עמוקה ללומדי התורה, ובשאיפה שתשמש כלי עזר ללימוד ולזיכרון דברי תורתנו הקדושה.
+            </Text>
+            <Text style={styles.paragraph}>
+              © כל הזכויות שמורות 
             </Text>
           </ScrollView>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
