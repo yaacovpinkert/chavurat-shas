@@ -17,6 +17,7 @@ import {
   formatHebrewYear,
   nextHebrewMonth,
   prevHebrewMonth,
+  toHebrewYMD,
 } from "../utils/hebrewDate";
 import { formatDateString } from "../utils/schedule";
 import theme from "../theme";
@@ -98,6 +99,8 @@ export default function HebrewCalendar({
   };
 
   const title = `${getHebrewMonthName(month, year)} ${formatHebrewYear(year)}`;
+  const todayYM = toHebrewYMD(new Date());
+  const isCurrentMonth = year === todayYM.year && month === todayYM.month;
 
   return (
     <View style={styles.container}>
@@ -119,6 +122,16 @@ export default function HebrewCalendar({
           <Text style={styles.arrowText}>›</Text>
         </TouchableOpacity>
       </View>
+
+      {!isCurrentMonth && (
+        <TouchableOpacity
+          style={styles.todayButton}
+          onPress={() => onMonthChange({ year: todayYM.year, month: todayYM.month })}
+          hitSlop={{ top: 6, bottom: 6, left: 10, right: 10 }}
+        >
+          <Text style={styles.todayButtonText}>היום</Text>
+        </TouchableOpacity>
+      )}
 
       <View style={[styles.weekRow, rowDir]}>
         {WEEKDAY_LABELS.map((label) => (
@@ -213,6 +226,19 @@ const styles = StyleSheet.create({
     fontFamily: theme.typography.fonts.bold,
     color: theme.colors.accent.primary,
     lineHeight: 26,
+  },
+  todayButton: {
+    alignSelf: "center",
+    backgroundColor: theme.colors.background.section,
+    borderRadius: theme.borderRadius.lg,
+    paddingHorizontal: 14,
+    paddingVertical: 4,
+    marginBottom: theme.spacing.sm,
+  },
+  todayButtonText: {
+    fontSize: theme.typography.sizes.xs,
+    fontFamily: theme.typography.fonts.semibold,
+    color: theme.colors.accent.primary,
   },
   weekRow: {
     width: "100%",
