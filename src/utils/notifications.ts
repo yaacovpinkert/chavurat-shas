@@ -31,6 +31,22 @@ export function setupNotificationHandler() {
   }
 }
 
+export async function ensureNotificationPermission(): Promise<boolean> {
+  if (Platform.OS === "web") return true;
+  const N = getNotifications();
+  if (!N) return true;
+
+  try {
+    const { status: existing } = await N.getPermissionsAsync();
+    if (existing === "granted") return true;
+
+    const { status } = await N.requestPermissionsAsync();
+    return status === "granted";
+  } catch {
+    return false;
+  }
+}
+
 export async function scheduleDaily(settings: NotificationSettings): Promise<void> {
   if (Platform.OS === "web") return;
   const N = getNotifications();

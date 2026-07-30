@@ -35,7 +35,7 @@ import {
 import { formatDateString, parseDateString, getTrackProgress } from "../utils/schedule";
 import { toHebrewDate, toHebrewYMD, HebrewYM } from "../utils/hebrewDate";
 import { confirmAction, notify } from "../utils/dialog";
-import { scheduleDaily } from "../utils/notifications";
+import { scheduleDaily, ensureNotificationPermission } from "../utils/notifications";
 import theme from "../theme";
 
 type Props = {
@@ -71,6 +71,10 @@ export default function SettingsScreen({ onReset }: Props) {
   const notif: NotificationSettings = settings?.notification ?? DEFAULT_NOTIF;
 
   async function handleNotifToggle(enabled: boolean) {
+    if (enabled) {
+      const granted = await ensureNotificationPermission();
+      if (!granted) return;
+    }
     const next: NotificationSettings = { ...notif, enabled };
     const updated = await updateNotificationSettings(next);
     if (updated) setSettings(updated);
