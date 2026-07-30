@@ -100,7 +100,6 @@ export default function HebrewCalendar({
 
   const title = `${getHebrewMonthName(month, year)} ${formatHebrewYear(year)}`;
   const todayYM = toHebrewYMD(new Date());
-  const isCurrentMonth = year === todayYM.year && month === todayYM.month;
 
   return (
     <View style={styles.container}>
@@ -123,15 +122,13 @@ export default function HebrewCalendar({
         </TouchableOpacity>
       </View>
 
-      {!isCurrentMonth && (
-        <TouchableOpacity
-          style={styles.todayButton}
-          onPress={() => onMonthChange({ year: todayYM.year, month: todayYM.month })}
-          hitSlop={{ top: 6, bottom: 6, left: 10, right: 10 }}
-        >
-          <Text style={styles.todayButtonText}>היום</Text>
-        </TouchableOpacity>
-      )}
+      <TouchableOpacity
+        style={styles.todayButton}
+        onPress={() => onMonthChange({ year: todayYM.year, month: todayYM.month })}
+        hitSlop={{ top: 6, bottom: 6, left: 10, right: 10 }}
+      >
+        <Text style={styles.todayButtonText}>היום</Text>
+      </TouchableOpacity>
 
       <View style={[styles.weekRow, rowDir]}>
         {WEEKDAY_LABELS.map((label) => (
