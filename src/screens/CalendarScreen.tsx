@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import {
   getItemsForDate,
   ScheduleItem,
@@ -21,6 +21,7 @@ import {
   hebrewToJDN,
   jdnToGregorian,
   daysInHebrewMonth,
+  formatHebrewDay,
   HebrewYM,
 } from "../utils/hebrewDate";
 import { loadSettings, loadProgress, markDone, unmarkDone, AppSettings, Progress } from "../store/storage";
@@ -32,6 +33,7 @@ import theme from "../theme";
 const DOT_COLORS = ["", "#4A90E2", "#F5A623", "#D0021B", "#7B2D8B"];
 
 export default function CalendarScreen() {
+  const navigation = useNavigation();
   const today = getTodayString();
   const [currentMonth, setCurrentMonth] = useState<HebrewYM>(() => {
     const h = toHebrewYMD(new Date());
@@ -42,6 +44,27 @@ export default function CalendarScreen() {
   const [markings, setMarkings] = useState<Record<string, DayMarking>>({});
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedItems, setSelectedItems] = useState<ScheduleItem[]>([]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      // Under forced RTL the header swaps sides, so headerRight renders at
+      // the visual upper-left corner (see App.tsx for the headerLeft/"i" button).
+      headerRight: () => {
+        const h = toHebrewYMD(new Date());
+        return (
+          <TouchableOpacity
+            onPress={() => setCurrentMonth({ year: h.year, month: h.month })}
+            style={styles.todayHeaderButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            accessibilityLabel="חזרה לחודש הנוכחי"
+            accessibilityRole="button"
+          >
+            <Text style={styles.todayHeaderButtonIcon}>{formatHebrewDay(h.day)}</Text>
+          </TouchableOpacity>
+        );
+      },
+    });
+  }, [navigation]);
 
   async function load() {
     const s = await loadSettings();
@@ -209,6 +232,22 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.md,
     borderRadius: theme.borderRadius.lg,
     ...theme.shadows.sm,
+  },
+  todayHeaderButton: {
+    marginHorizontal: theme.spacing.lg,
+    minWidth: 30,
+    height: 30,
+    paddingHorizontal: 4,
+    borderRadius: 15,
+    borderWidth: 1.5,
+    borderColor: theme.colors.accent.primary,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  todayHeaderButtonIcon: {
+    fontSize: 12,
+    fontFamily: theme.typography.fonts.bold,
+    color: theme.colors.accent.primary,
   },
   modalOverlay: {
     flex: 1,
